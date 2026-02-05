@@ -252,108 +252,127 @@ class YahooFinanceData(YahooFinanceCSVData):
 
     def start_v7(self):
         try:
-            import requests
+            import yfinance as yf
+            import os
+            import time
         except ImportError:
-            msg = ('The new Yahoo data feed requires to have the requests '
-                   'module installed. Please use pip install requests or '
-                   'the method of your choice')
+            msg = ('The Yahoo data feed requires to have the yfinance '
+                   'module installed. Please use pip install yfinance')
             raise Exception(msg)
 
         self.error = None
-        url = self.p.urlhist.format(self.p.dataname)
 
-        sesskwargs = dict()
+        # Set proxy via environment variables if provided
+        original_http_proxy = os.environ.get('HTTP_PROXY')
+        original_https_proxy = os.environ.get('HTTPS_PROXY')
+
         if self.p.proxies:
-            sesskwargs['proxies'] = self.p.proxies
+            proxy = self.p.proxies.get('http') or self.p.proxies.get('https')
+            if proxy:
+                os.environ['HTTP_PROXY'] = proxy
+                os.environ['HTTPS_PROXY'] = proxy
 
-        crumb = None
-        sess = requests.Session()
-        sess.headers['User-Agent'] = 'backtrader'
-        for i in range(self.p.retries + 1):  # at least once
-            resp = sess.get(url, **sesskwargs)
-            if resp.status_code != requests.codes.ok:
-                continue
+        retries = 3
+        df = None
+        last_error = None
 
-            txt = resp.text
-            i = txt.find('CrumbStore')
-            if i == -1:
-                continue
-            i = txt.find('crumb', i)
-            if i == -1:
-                continue
-            istart = txt.find('"', i + len('crumb') + 1)
-            if istart == -1:
-                continue
-            istart += 1
-            iend = txt.find('"', istart)
-            if iend == -1:
-                continue
+        try:
+            # Map timeframe to yfinance interval
+            intervals = {
+                bt.TimeFrame.Days: '1d',
+                bt.TimeFrame.Weeks: '1wk',
+                bt.TimeFrame.Months: '1mo',
+            }
+            interval = intervals.get(self.p.timeframe, '1d')
 
-            crumb = txt[istart:iend]
-            crumb = crumb.encode('ascii').decode('unicode-escape')
-            break
+            # Format dates for yfinance
+            start_date = self.p.fromdate.strftime('%Y-%m-%d') if self.p.fromdate else None
+            end_date = self.p.todate.strftime('%Y-%m-%d') if self.p.todate else None
 
-        if crumb is None:
-            self.error = 'Crumb not found'
+            # Retry logic for rate limiting
+            for attempt in range(retries):
+                try:
+                    # Download data using yfinance
+                    ticker_obj = yf.Ticker(self.p.dataname)
+                    df = ticker_obj.history(start=start_date, end=end_date, interval=interval)
+
+                    if df.empty:
+                        last_error = 'No data found for ticker {}'.format(self.p.dataname)
+                        if attempt < retries - 1:
+                            time.sleep(3 + (2 ** attempt))
+                            continue
+                        else:
+                            self.error = last_error
+                            self.f = None
+                            return
+
+                    # Success - break out of retry loop
+                    break
+
+                except Exception as e:
+                    last_error = str(e)
+                    if attempt < retries - 1:
+                        wait_time = 5 + (2 ** attempt)
+                        time.sleep(wait_time)
+                    else:
+                        self.error = 'Error downloading data after {} attempts: {}'.format(retries, last_error)
+                        self.f = None
+                        return
+
+            if df is None or df.empty:
+                self.error = last_error or 'Unknown error'
+                self.f = None
+                return
+
+            # Convert DataFrame to CSV format in memory
+            csv_buffer = io.StringIO()
+            df.to_csv(csv_buffer)
+            csv_buffer.seek(0)
+
+            self.f = csv_buffer
+
+        except Exception as e:
+            self.error = 'Error downloading data: {}'.format(str(e))
             self.f = None
-            return
 
-        crumb = urlquote(crumb)
+        finally:
+            # Restore original proxy settings
+            if self.p.proxies:
+                if original_http_proxy:
+                    os.environ['HTTP_PROXY'] = original_http_proxy
+                else:
+                    os.environ.pop('HTTP_PROXY', None)
 
-        # urldown/ticker?period1=posix1&period2=posix2&interval=1d&events=history&crumb=crumb
-
-        # Try to download
-        urld = '{}/{}'.format(self.p.urldown, self.p.dataname)
-
-        urlargs = []
-        posix = date(1970, 1, 1)
-        if self.p.todate is not None:
-            period2 = (self.p.todate.date() - posix).total_seconds()
-            urlargs.append('period2={}'.format(int(period2)))
-
-        if self.p.todate is not None:
-            period1 = (self.p.fromdate.date() - posix).total_seconds()
-            urlargs.append('period1={}'.format(int(period1)))
-
-        intervals = {
-            bt.TimeFrame.Days: '1d',
-            bt.TimeFrame.Weeks: '1wk',
-            bt.TimeFrame.Months: '1mo',
-        }
-
-        urlargs.append('interval={}'.format(intervals[self.p.timeframe]))
-        urlargs.append('events=history')
-        urlargs.append('crumb={}'.format(crumb))
-
-        urld = '{}?{}'.format(urld, '&'.join(urlargs))
-        f = None
-        for i in range(self.p.retries + 1):  # at least once
-            resp = sess.get(urld, **sesskwargs)
-            if resp.status_code != requests.codes.ok:
-                continue
-
-            ctype = resp.headers['Content-Type']
-            # Cover as many text types as possible for Yahoo changes
-            if not ctype.startswith('text/'):
-                self.error = 'Wrong content type: %s' % ctype
-                continue  # HTML returned? wrong url?
-
-            # buffer everything from the socket into a local buffer
-            try:
-                # r.encoding = 'UTF-8'
-                f = io.StringIO(resp.text, newline=None)
-            except Exception:
-                continue  # try again if possible
-
-            break
-
-        self.f = f
+                if original_https_proxy:
+                    os.environ['HTTPS_PROXY'] = original_https_proxy
+                else:
+                    os.environ.pop('HTTPS_PROXY', None)
 
     def start(self):
         self.start_v7()
 
-        # Prepared a "path" file -  CSV Parser can take over
-        super(YahooFinanceData, self).start()
+        # Check if download was successful
+        if self.f is None:
+            if self.error:
+                raise Exception('Yahoo Finance download failed: {}'.format(self.error))
+            else:
+                raise Exception('Yahoo Finance download failed: Unknown error')
+
+        # Handle reverse if needed (Yahoo used to send data in reverse order)
+        if self.params.reverse:
+            dq = collections.deque()
+            for line in self.f:
+                dq.appendleft(line)
+
+            f = io.StringIO(newline=None)
+            f.writelines(dq)
+            f.seek(0)
+            self.f.close()
+            self.f = f
+
+        # Skip YahooFinanceCSVData.start() and call grandparent's start()
+        # to avoid trying to open self.p.dataname as a file
+        super(YahooFinanceCSVData, self).start()
 
 
 class YahooFinance(feed.CSVFeedBase):
