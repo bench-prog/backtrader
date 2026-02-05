@@ -23,20 +23,10 @@ from __future__ import (absolute_import, division, print_function,
 
 
 import argparse
-import collections
 import datetime
 import io
 import logging
 import sys
-
-
-PY2 = sys.version_info.major == 2
-if PY2:
-    from urllib2 import urlopen
-    from urllib import quote as urlquote
-else:
-    from urllib.request import urlopen
-    from urllib.parse import quote as urlquote
 
 
 logging.basicConfig(
@@ -45,103 +35,126 @@ logging.basicConfig(
 
 
 class YahooDownload(object):
-    urlhist = 'https://finance.yahoo.com/quote/{}/history'
-    urldown = 'https://query1.finance.yahoo.com/v7/finance/download'
+    """Download historical data from Yahoo Finance using yfinance library"""
+
     retries = 3
 
-    def __init__(self, ticker, fromdate, todate, period='d', reverse=False):
+    def __init__(self, ticker, fromdate, todate, period='d', reverse=False, proxy=None):
         try:
-            import requests
+            import yfinance as yf
+            import time
+            import os
         except ImportError:
-            msg = ('The new Yahoo data feed requires to have the requests '
-                   'module installed. Please use pip install requests or '
-                   'the method of your choice')
+            msg = ('The Yahoo data feed requires the yfinance module. '
+                   'Please install it using: pip install yfinance')
             raise Exception(msg)
 
-        url = self.urlhist.format(ticker)
+        # Set proxy via environment variables if provided
+        # yfinance uses curl_cffi which reads from environment variables
+        original_http_proxy = os.environ.get('HTTP_PROXY')
+        original_https_proxy = os.environ.get('HTTPS_PROXY')
 
-        sesskwargs = dict()
-        if False and self.p.proxies:
-            sesskwargs['proxies'] = self.p.proxies
+        if proxy:
+            os.environ['HTTP_PROXY'] = proxy
+            os.environ['HTTPS_PROXY'] = proxy
+            logging.info(f'Using proxy: {proxy}')
 
-        crumb = None
-        sess = requests.Session()
-        for i in range(self.retries + 1):  # at least once
-            resp = sess.get(url, **sesskwargs)
-            if resp.status_code != requests.codes.ok:
-                continue
-
-            txt = resp.text
-            i = txt.find('CrumbStore')
-            if i == -1:
-                continue
-            i = txt.find('crumb', i)
-            if i == -1:
-                continue
-            istart = txt.find('"', i + len('crumb') + 1)
-            if istart == -1:
-                continue
-            istart += 1
-            iend = txt.find('"', istart)
-            if iend == -1:
-                continue
-
-            crumb = txt[istart:iend]
-            crumb = crumb.encode('ascii').decode('unicode-escape')
-            break
-
-        if crumb is None:
-            self.error = 'Crumb not found'
-            self.f = None
-            return
-
-        # urldown/ticker?period1=posix1&period2=posix2&interval=1d&events=history&crumb=crumb
-
-        # Try to download
-        urld = '{}/{}'.format(self.urldown, ticker)
-
-        urlargs = []
-        posix = datetime.date(1970, 1, 1)
-        if todate is not None:
-            period2 = (todate.date() - posix).total_seconds()
-            urlargs.append('period2={}'.format(int(period2)))
-
-        if todate is not None:
-            period1 = (fromdate.date() - posix).total_seconds()
-            urlargs.append('period1={}'.format(int(period1)))
-
+        # Map period to yfinance interval
         intervals = {
             'd': '1d',
             'w': '1wk',
             'm': '1mo',
         }
 
-        urlargs.append('interval={}'.format(intervals[period]))
-        urlargs.append('events=history')
-        urlargs.append('crumb={}'.format(crumb))
+        interval = intervals.get(period, '1d')
 
-        urld = '{}?{}'.format(urld, '&'.join(urlargs))
-        f = None
-        for i in range(self.retries + 1):  # at least once
-            resp = sess.get(urld, **sesskwargs)
-            if resp.status_code != requests.codes.ok:
-                continue
+        # Format dates for yfinance (YYYY-MM-DD)
+        start_date = fromdate.strftime('%Y-%m-%d')
+        end_date = todate.strftime('%Y-%m-%d')
 
-            ctype = resp.headers['Content-Type']
-            if 'text/csv' not in ctype:
-                self.error = 'Wrong content type: %s' % ctype
-                continue  # HTML returned? wrong url?
+        df = None
+        last_error = None
 
-            # buffer everything from the socket into a local buffer
+        # Retry logic for rate limiting
+        for attempt in range(self.retries):
             try:
-                # r.encoding = 'UTF-8'
-                f = io.StringIO(resp.text, newline=None)
-            except Exception:
-                continue  # try again if possible
+                # Download data using yfinance
+                logging.info(f'Downloading {ticker} from {start_date} to {end_date} (attempt {attempt + 1}/{self.retries})')
 
-            break
+                # Let yfinance handle the session (it uses curl_cffi internally)
+                ticker_obj = yf.Ticker(ticker)
+                df = ticker_obj.history(start=start_date, end=end_date, interval=interval)
 
-        self.datafile = f
+                if df.empty:
+                    last_error = f'No data found for ticker {ticker}'
+                    if attempt < self.retries - 1:
+                        logging.warning(f'{last_error}, retrying...')
+                        time.sleep(3 + (2 ** attempt))  # Longer wait time
+                        continue
+                    else:
+                        self.error = last_error
+                        self.datafile = None
+                        logging.error(self.error)
+                        return
+
+                # Success - break out of retry loop
+                break
+
+            except Exception as e:
+                last_error = str(e)
+                if attempt < self.retries - 1:
+                    wait_time = 5 + (2 ** attempt)  # Longer exponential backoff
+                    logging.warning(f'Error: {last_error}, waiting {wait_time}s before retry...')
+                    time.sleep(wait_time)
+                else:
+                    self.error = f'Error downloading data after {self.retries} attempts: {last_error}'
+                    self.datafile = None
+                    logging.error(self.error)
+                    return
+
+        if df is None or df.empty:
+            self.error = last_error or 'Unknown error'
+            self.datafile = None
+            return
+
+        try:
+            # Convert DataFrame to CSV format in memory
+            csv_buffer = io.StringIO()
+            df.to_csv(csv_buffer)
+            csv_buffer.seek(0)
+
+            # Optionally reverse the data
+            if reverse:
+                lines = csv_buffer.readlines()
+                header = lines[0]
+                data_lines = lines[1:]
+                data_lines.reverse()
+                csv_buffer = io.StringIO()
+                csv_buffer.write(header)
+                csv_buffer.writelines(data_lines)
+                csv_buffer.seek(0)
+
+            self.datafile = csv_buffer
+            self.error = None
+            logging.info(f'Successfully downloaded {len(df)} rows of data')
+
+        except Exception as e:
+            self.error = f'Error processing data: {str(e)}'
+            self.datafile = None
+            logging.error(self.error)
+
+        finally:
+            # Restore original proxy settings
+            if proxy:
+                if original_http_proxy:
+                    os.environ['HTTP_PROXY'] = original_http_proxy
+                else:
+                    os.environ.pop('HTTP_PROXY', None)
+
+                if original_https_proxy:
+                    os.environ['HTTPS_PROXY'] = original_https_proxy
+                else:
+                    os.environ.pop('HTTPS_PROXY', None)
 
     def writetofile(self, filename):
         if not self.datafile:
@@ -182,6 +195,9 @@ def parse_args():
     parser.add_argument('--outfile', required=True,
                         help='Output file name')
 
+    parser.add_argument('--proxy',
+                        help='Proxy URL (e.g., http://127.0.0.1:7890)')
+
     return parser.parse_args()
 
 
@@ -216,7 +232,8 @@ if __name__ == '__main__':
             fromdate=fromdate,
             todate=todate,
             period=args.timeframe,
-            reverse=reverse)
+            reverse=reverse,
+            proxy=args.proxy)
 
     except Exception as e:
         logging.error('Downloading data from Yahoo failed')
