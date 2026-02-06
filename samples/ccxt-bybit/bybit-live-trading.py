@@ -51,7 +51,8 @@ Usage:
     python bybit-live-trading.py --apikey YOUR_KEY --secret YOUR_SECRET --no-paper-trading
 
     # Testnet trading (recommended for testing)
-    python bybit-live-trading.py --testnet --apikey YOUR_TESTNET_KEY --secret YOUR_TESTNET_SECRET --no-paper-trading
+    python bybit-live-trading.py --testnet --apikey YOUR_TESTNET_KEY --secret YOUR_TESTNET_SECRET --no-paper-trading    
+    
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
