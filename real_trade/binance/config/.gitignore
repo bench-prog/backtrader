@@ -1,0 +1,10 @@
+# 配置文件（包含敏感信息）
+*.json
+
+# 但保留模板文件
+!default.json
+!spot_testnet.json.template
+!futures_testnet.json.template
+
+# 如果有自定义配置，不要提交
+!custom_*.json

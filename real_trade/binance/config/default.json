@@ -1,0 +1,32 @@
+{
+  "api": {
+    "apikey": "",
+    "secret": "",
+    "testnet": true,
+    "market_type": "future"
+  },
+  "trading": {
+    "paper_trading": false,
+    "initial_cash": 10000.0,
+    "commission": 0.001
+  },
+  "data": {
+    "symbol": "BTC/USDT",
+    "timeframe": "15m",
+    "backtest": false,
+    "historical_limit": 500
+  },
+  "strategy": {
+    "rsi_period": 7,
+    "rsi_low": 40,
+    "rsi_high": 60,
+    "ma_fast": 3,
+    "ma_slow": 10,
+    "trade_size_pct": 0.3,
+    "stop_loss_pct": 5.0
+  },
+  "proxy": {
+    "auto_detect": true,
+    "proxy_url": ""
+  }
+}
