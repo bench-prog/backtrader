@@ -1,28 +1,14 @@
 {
-  "api": {
-    "apikey": "YOUR_SPOT_DEMO_TRADING_API_KEY",
-    "secret": "YOUR_SPOT_DEMO_TRADING_SECRET",
-    "testnet": true,
-    "market_type": "spot"
-  },
-  "trading": {
-    "paper_trading": true,
-    "initial_cash": 10000.0,
-    "commission": 0.001
-  },
-  "data": {
-    "symbol": "BTC/USDT",
-    "timeframe": "1h",
-    "backtest": true,
-    "historical_limit": 500
-  },
-  "strategy": {
-    "fast_period": 10,
-    "slow_period": 30,
-    "printlog": true
-  },
-  "proxy": {
-    "auto_detect": true,
-    "proxy_url": ""
-  }
+  "exchange": "binance",
+  "apikey": "YOUR_SPOT_DEMO_TRADING_API_KEY",
+  "secret": "YOUR_SPOT_DEMO_TRADING_SECRET",
+  "testnet": true,
+  "market_type": "spot",
+  "symbol": "BTC/USDT",
+  "timeframe": "1h",
+  "paper_trading": true,
+  "cash": 10000.0,
+  "commission": 0.001,
+  "backtest": true,
+  "historical_limit": 500
 }

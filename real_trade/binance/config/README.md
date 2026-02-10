@@ -1,156 +1,131 @@
 # 配置文件说明
 
-## 可用配置文件
+## 配置方式
 
-| 文件 | 用途 | API密钥 |
-|------|------|---------|
-| `futures_backtest.json` | 历史数据回测 | 不需要 |
-| `futures_live_demo.json` | Demo Trading 实盘测试 | 需要 |
-| `*.template` | 配置模板 | - |
+系统支持三种配置方式，统一通过 `create_binance_engine_from_config()` 使用：
 
-## 配置文件结构
+### 1. JSON 文件
 
-```json
-{
-  "api": {
-    "apikey": "",                   // API 密钥
-    "secret": "",                   // Secret
-    "testnet": true,                // true: Demo Trading; false: 生产环境
-    "market_type": "future"         // spot: 现货; future: 合约
-  },
-  "trading": {
-    "paper_trading": true,          // true: 本地模拟; false: 真实发送订单
-    "initial_cash": 10000.0,        // 初始资金
-    "commission": 0.001             // 手续费率 (0.001 = 0.1%)
-  },
-  "data": {
-    "symbol": "BTC/USDT",           // 交易对
-    "timeframe": "15m",             // K线周期 (1m, 5m, 15m, 1h, 4h, 1d等)
-    "backtest": true,               // true: 历史数据; false: 实时数据
-    "historical_limit": 500         // 加载K线数量
-  },
-  "strategy": {
-    // 策略参数（可选，根据策略自定义）
-    "rsi_period": 7,
-    "ma_fast": 3,
-    "ma_slow": 10
-  },
-  "proxy": {
-    "auto_detect": true,            // 自动检测系统代理
-    "proxy_url": ""                 // 手动指定代理
-  }
-}
-```
-
-## 三个关键配置
-
-### 1. `testnet` - 环境选择
-- `true`: 连接 Demo Trading（虚拟资金）
-- `false`: 连接生产环境（真实资金）
-
-### 2. `paper_trading` - 订单执行
-- `true`: 订单只在本地模拟，**不发送**到交易所
-- `false`: 订单**真实发送**到交易所
-
-### 3. `backtest` - 数据模式
-- `true`: 使用历史数据回测
-- `false`: 使用实时数据流
-
-## 运行模式组合
-
-### 模式 1：回测（最快）⭐
-```json
-{"data": {"backtest": true}, "trading": {"paper_trading": true}}
-```
-- 历史数据 + 本地模拟
-- 不需要 API 密钥
-- 适合策略开发
-
-**使用：** `futures_backtest.json`
-
-### 模式 2：Demo Trading 实盘（推荐测试）⭐
-```json
-{"api": {"testnet": true}, "data": {"backtest": false}, "trading": {"paper_trading": false}}
-```
-- 连接 Demo Trading
-- 真实订单流程
-- 虚拟资金
-- 适合上线前测试
-
-**使用：** `futures_live_demo.json`
-
-### 模式 3：生产实盘（谨慎！）
-```json
-{"api": {"testnet": false}, "data": {"backtest": false}, "trading": {"paper_trading": false}}
-```
-- 真实资金交易
-- 需充分测试
-
-## 使用方法
-
-### 1. 从配置文件创建引擎
 ```python
 from real_trade.binance import create_binance_engine_from_config
 
-store, broker, data, config = create_binance_engine_from_config("futures_backtest.json")
+store, broker, data = create_binance_engine_from_config("my_config.json")
 ```
 
-### 2. 读取配置值
+### 2. GlobalConfig 对象
+
 ```python
-from real_trade.binance import load_binance_config, get_config_value
+from real_trade.utils import GlobalConfig
+from real_trade.binance import create_binance_engine_from_config
 
-config = load_binance_config("futures_backtest.json")
-symbol = get_config_value(config, "data.symbol", "BTC/USDT")
-rsi_period = get_config_value(config, "strategy.rsi_period", 14)
+cfg = GlobalConfig(symbol="ETH/USDT", timeframe="15m", backtest=True)
+store, broker, data = create_binance_engine_from_config(cfg)
 ```
 
-### 3. 创建自定义配置
-```bash
-# 方法1：交互式生成
-cd ../tools && python config_generator.py
+### 3. 字典
 
-# 方法2：复制模板
-cp futures_testnet.json.template my_config.json
-# 编辑 my_config.json
+```python
+from real_trade.binance import create_binance_engine_from_config
+
+store, broker, data = create_binance_engine_from_config({
+    "symbol": "ETH/USDT",
+    "timeframe": "15m",
+    "backtest": True,
+})
 ```
 
-### 4. 验证配置
+## JSON 配置格式
+
+推荐使用**扁平结构**（与 `GlobalConfig` 字段完全一致）：
+
+```json
+{
+  "exchange": "binance",
+  "apikey": "",
+  "secret": "",
+  "testnet": true,
+  "market_type": "future",
+  "symbol": "BTC/USDT",
+  "timeframe": "15m",
+  "paper_trading": true,
+  "cash": 10000.0,
+  "commission": 0.001,
+  "backtest": true,
+  "historical_limit": 500
+}
+```
+
+也兼容旧版**嵌套结构**：
+
+```json
+{
+  "api": {"apikey": "", "secret": "", "testnet": true, "market_type": "future"},
+  "trading": {"paper_trading": true, "initial_cash": 10000.0, "commission": 0.001},
+  "data": {"symbol": "BTC/USDT", "timeframe": "15m", "backtest": true, "historical_limit": 500},
+  "proxy": {"proxy_url": ""}
+}
+```
+
+## 核心参数说明
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `apikey` | str | "" | API Key |
+| `secret` | str | "" | API Secret |
+| `testnet` | bool | true | true: Demo Trading; false: 生产环境 |
+| `market_type` | str | "spot" | spot / future / delivery |
+| `symbol` | str | "BTC/USDT" | 交易对 |
+| `timeframe` | str | "1h" | K线周期 (1m, 5m, 15m, 1h, 4h, 1d 等) |
+| `paper_trading` | bool | true | true: 本地模拟; false: 真实发送订单 |
+| `cash` | float | 10000.0 | 初始资金 |
+| `commission` | float | 0.001 | 手续费率 (0.001 = 0.1%) |
+| `backtest` | bool | false | true: 历史数据回测; false: 实时数据 |
+| `historical_limit` | int | 1000 | 加载K线数量 |
+| `fromdate` | str | null | 回测起始日期 "2024-01-01" |
+| `todate` | str | null | 回测结束日期 |
+| `proxy` | str | null | 代理地址，null 时自动检测系统代理 |
+
+## 运行模式
+
+### 回测（最快，不需要 API 密钥）
+
+```json
+{"backtest": true, "paper_trading": true}
+```
+
+### Demo Trading 实盘测试
+
+```json
+{"testnet": true, "paper_trading": false, "backtest": false}
+```
+
+需要 Demo Trading API 密钥。
+
+### 生产实盘（谨慎！）
+
+```json
+{"testnet": false, "paper_trading": false, "backtest": false}
+```
+
+真实资金交易，请充分测试后使用。
+
+## 工具
+
 ```bash
-cd ../tools && python config_validator.py my_config.json
+# 交互式生成配置文件
+python tools/config_generator.py
+
+# 验证配置文件
+python tools/config_validator.py my_config.json
 ```
 
 ## 获取 Demo Trading API 密钥
 
-### Futures（合约）
-1. 访问 https://testnet.binancefuture.com/
-2. GitHub 登录
-3. 生成 API Key
-
-### Spot（现货）
-1. 访问 https://testnet.binance.vision/
-2. 注册并生成密钥
+- Futures: https://testnet.binancefuture.com/ (GitHub 登录)
+- Spot: https://testnet.binance.vision/
 
 ## 安全建议
 
-⚠️ **重要：**
 1. 不要提交包含真实密钥的配置文件到 Git
-2. `.gitignore` 已自动配置
-3. Demo Trading 不影响真实资金
-4. 建议使用环境变量存储生产环境密钥
-
-## 常见问题
-
-**Q: testnet=true 还需要 paper_trading 吗？**
-
-A: 是的，它们控制不同层级：
-- `testnet=true` → 连接到 Demo Trading 环境
-- `paper_trading=false` → 真实发送订单到 Demo Trading
-- 组合使用可以测试完整订单流程
-
-**Q: backtest=true 时需要 API 密钥吗？**
-
-A: 不需要。回测模式只使用历史数据，不连接交易所。
-
-**Q: 如何切换到生产环境？**
-
-A: 创建新配置文件，设置 `testnet=false`，并使用生产环境 API 密钥。**谨慎操作！**
+2. `.gitignore` 已排除所有 `*.json`，仅保留 `*.json.template`
+3. 建议使用环境变量存储生产环境密钥（`RT_APIKEY`, `RT_SECRET`）
