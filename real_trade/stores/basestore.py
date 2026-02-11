@@ -8,10 +8,10 @@ Base Store - 通用的交易所连接管理基类
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import threading
-import subprocess
 import re
-from typing import Optional, Dict, Any
+import subprocess
+import threading
+from typing import Any, Dict, Optional
 
 
 class BaseStore:
@@ -35,26 +35,23 @@ class BaseStore:
         try:
             # 尝试在 macOS 上获取系统代理
             result = subprocess.run(
-                ['scutil', '--proxy'],
-                capture_output=True,
-                text=True,
-                timeout=2
+                ["scutil", "--proxy"], capture_output=True, text=True, timeout=2
             )
 
             if result.returncode == 0:
                 output = result.stdout
 
                 # 查找 HTTP 代理设置
-                http_enabled = re.search(r'HTTPEnable\s*:\s*(\d+)', output)
-                if http_enabled and http_enabled.group(1) == '1':
-                    http_proxy = re.search(r'HTTPProxy\s*:\s*(\S+)', output)
-                    http_port = re.search(r'HTTPPort\s*:\s*(\d+)', output)
+                http_enabled = re.search(r"HTTPEnable\s*:\s*(\d+)", output)
+                if http_enabled and http_enabled.group(1) == "1":
+                    http_proxy = re.search(r"HTTPProxy\s*:\s*(\S+)", output)
+                    http_port = re.search(r"HTTPPort\s*:\s*(\d+)", output)
 
                     if http_proxy and http_port:
                         proxy_url = f"http://{http_proxy.group(1)}:{http_port.group(1)}"
-                        print(f"✓ 检测到系统代理: {proxy_url}")
+                        print(f"[Store] Detected system proxy: {proxy_url}")
                         return proxy_url
-        except Exception as e:
+        except Exception:
             # 静默失败，不影响正常使用
             pass
 
@@ -75,7 +72,7 @@ class BaseStore:
         secret: str = "",
         testnet: bool = True,
         proxy: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ):
         """
         初始化基类
@@ -123,11 +120,11 @@ class BaseStore:
         try:
             self._exchange.fetch_balance()
             self._connected = True
-            print(f"✓ {self.__class__.__name__} connection successful")
+            print(f"[Store] {self.__class__.__name__} connection successful")
             return True
         except Exception as e:
             self._connected = False
-            print(f"✗ {self.__class__.__name__} connection failed: {e}")
+            print(f"[Store] {self.__class__.__name__} connection failed: {e}")
             return False
 
     def get_balance(self, currency: str = "USDT") -> float:
@@ -136,7 +133,7 @@ class BaseStore:
             balance = self._exchange.fetch_balance()
             return balance[currency]["free"]
         except Exception as e:
-            print(f"Error fetching balance: {e}")
+            print(f"[Store] Error fetching balance: {e}")
             return 0.0
 
     def get_total_value(self, currency: str = "USDT") -> float:
@@ -145,7 +142,7 @@ class BaseStore:
             balance = self._exchange.fetch_balance()
             return balance["total"][currency]
         except Exception as e:
-            print(f"Error fetching total value: {e}")
+            print(f"[Store] Error fetching total value: {e}")
             return 0.0
 
     def get_positions(self, symbols: Optional[list] = None) -> list:
@@ -153,7 +150,7 @@ class BaseStore:
         try:
             return self._exchange.fetch_positions(symbols)
         except Exception as e:
-            print(f"Error fetching positions: {e}")
+            print(f"[Store] Error fetching positions: {e}")
             return []
 
     def get_open_orders(self, symbol: Optional[str] = None) -> list:
@@ -161,7 +158,7 @@ class BaseStore:
         try:
             return self._exchange.fetch_open_orders(symbol)
         except Exception as e:
-            print(f"Error fetching open orders: {e}")
+            print(f"[Store] Error fetching open orders: {e}")
             return []
 
     def get_markets(self) -> Dict[str, Any]:
@@ -169,7 +166,7 @@ class BaseStore:
         try:
             return self._exchange.load_markets()
         except Exception as e:
-            print(f"Error loading markets: {e}")
+            print(f"[Store] Error loading markets: {e}")
             return {}
 
     def get_ticker(self, symbol: str) -> Dict[str, Any]:
@@ -177,7 +174,7 @@ class BaseStore:
         try:
             return self._exchange.fetch_ticker(symbol)
         except Exception as e:
-            print(f"Error fetching ticker: {e}")
+            print(f"[Store] Error fetching ticker: {e}")
             return {}
 
     @property

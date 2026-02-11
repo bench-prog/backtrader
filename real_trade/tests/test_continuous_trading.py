@@ -13,7 +13,7 @@ import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../.."))
 
-from real_trade.binance import BinanceStore
+from real_trade.stores import BinanceStore
 
 
 def test_continuous_trading():
@@ -43,7 +43,7 @@ def test_continuous_trading():
 
         # 获取初始余额
         balance_start = exchange.fetch_balance()
-        usdt_start = balance_start['USDT']['total']
+        usdt_start = balance_start["USDT"]["total"]
         print(f"初始余额: {usdt_start:.2f} USDT\n")
 
         # 测试参数
@@ -66,7 +66,7 @@ def test_continuous_trading():
             try:
                 # 获取当前价格
                 ticker = exchange.fetch_ticker("ETH/USDT:USDT")
-                current_price = ticker['last']
+                current_price = ticker["last"]
                 print(f"当前价格: ${current_price:,.2f}\n")
 
                 # ----------------------------------------
@@ -74,10 +74,12 @@ def test_continuous_trading():
                 # ----------------------------------------
                 print(f"[{round_num}.1] 买入 {amount_per_trade} ETH...")
 
-                buy_order = exchange.create_market_buy_order("ETH/USDT:USDT", amount_per_trade)
-                buy_price = buy_order.get('average', current_price)
+                buy_order = exchange.create_market_buy_order(
+                    "ETH/USDT:USDT", amount_per_trade
+                )
+                buy_price = buy_order.get("average", current_price)
 
-                print(f"  ✓ 买入成功")
+                print("  ✓ 买入成功")
                 print(f"    订单 ID: {buy_order['id']}")
                 print(f"    成交价: ${buy_price:,.2f}")
                 print(f"    成交量: {buy_order['filled']} ETH")
@@ -92,10 +94,12 @@ def test_continuous_trading():
                 # ----------------------------------------
                 print(f"\n[{round_num}.2] 卖出 {amount_per_trade} ETH...")
 
-                sell_order = exchange.create_market_sell_order("ETH/USDT:USDT", amount_per_trade)
-                sell_price = sell_order.get('average', current_price)
+                sell_order = exchange.create_market_sell_order(
+                    "ETH/USDT:USDT", amount_per_trade
+                )
+                sell_price = sell_order.get("average", current_price)
 
-                print(f"  ✓ 卖出成功")
+                print("  ✓ 卖出成功")
                 print(f"    订单 ID: {sell_order['id']}")
                 print(f"    成交价: ${sell_price:,.2f}")
                 print(f"    成交量: {sell_order['filled']} ETH")
@@ -107,23 +111,25 @@ def test_continuous_trading():
                 pnl = (sell_price - buy_price) * amount_per_trade
                 pnl_pct = (sell_price - buy_price) / buy_price * 100
 
-                trade_records.append({
-                    'round': round_num,
-                    'buy_price': buy_price,
-                    'sell_price': sell_price,
-                    'pnl': pnl,
-                    'pnl_pct': pnl_pct
-                })
+                trade_records.append(
+                    {
+                        "round": round_num,
+                        "buy_price": buy_price,
+                        "sell_price": sell_price,
+                        "pnl": pnl,
+                        "pnl_pct": pnl_pct,
+                    }
+                )
 
                 print(f"\n  本轮盈亏: ${pnl:.4f} ({pnl_pct:+.3f}%)")
 
                 # 查看当前持仓（应该为 0）
                 positions = exchange.fetch_positions()
-                active_pos = [p for p in positions if float(p.get('contracts', 0)) != 0]
-                btc_pos = [p for p in active_pos if p['symbol'] == 'ETH/USDT:USDT']
+                active_pos = [p for p in positions if float(p.get("contracts", 0)) != 0]
+                btc_pos = [p for p in active_pos if p["symbol"] == "ETH/USDT:USDT"]
 
                 if not btc_pos:
-                    print(f"  ✓ 持仓已平仓")
+                    print("  ✓ 持仓已平仓")
                 else:
                     print(f"  ⚠️ 剩余持仓: {float(btc_pos[0]['contracts']):.6f} ETH")
 
@@ -147,43 +153,46 @@ def test_continuous_trading():
 
         # 获取最终余额
         balance_end = exchange.fetch_balance()
-        usdt_end = balance_end['USDT']['total']
+        usdt_end = balance_end["USDT"]["total"]
 
-        print(f"\n余额变化:")
+        print("\n余额变化:")
         print(f"  初始余额: {usdt_start:.2f} USDT")
         print(f"  最终余额: {usdt_end:.2f} USDT")
         print(f"  净盈亏: {usdt_end - usdt_start:.2f} USDT")
 
-        print(f"\n交易统计:")
+        print("\n交易统计:")
         print(f"  总交易次数: {total_trades}")
         print(f"  成功: {successful_trades}")
         print(f"  失败: {failed_trades}")
-        print(f"  成功率: {successful_trades/total_trades*100:.1f}%")
+        print(f"  成功率: {successful_trades / total_trades * 100:.1f}%")
 
         if trade_records:
-            print(f"\n每轮明细:")
+            print("\n每轮明细:")
             total_pnl = 0
             for record in trade_records:
-                print(f"  轮次 {record['round']}: "
-                      f"买 ${record['buy_price']:,.2f} → "
-                      f"卖 ${record['sell_price']:,.2f} = "
-                      f"${record['pnl']:.4f} ({record['pnl_pct']:+.3f}%)")
-                total_pnl += record['pnl']
+                print(
+                    f"  轮次 {record['round']}: "
+                    f"买 ${record['buy_price']:,.2f} → "
+                    f"卖 ${record['sell_price']:,.2f} = "
+                    f"${record['pnl']:.4f} ({record['pnl_pct']:+.3f}%)"
+                )
+                total_pnl += record["pnl"]
 
             print(f"\n  总盈亏（不含手续费）: ${total_pnl:.4f}")
-            print(f"  平均每轮: ${total_pnl/len(trade_records):.4f}")
+            print(f"  平均每轮: ${total_pnl / len(trade_records):.4f}")
 
         print("\n" + "=" * 60)
         print("✓ 连续交易测试完成！")
         print("=" * 60)
         print(f"  - 完成 {rounds} 轮买卖")
-        print(f"  - 成功率 {successful_trades/total_trades*100:.1f}%")
-        print(f"  - 系统运行稳定")
+        print(f"  - 成功率 {successful_trades / total_trades * 100:.1f}%")
+        print("  - 系统运行稳定")
         print()
 
     except Exception as e:
         print(f"\n✗ 测试失败: {e}")
         import traceback
+
         traceback.print_exc()
 
 

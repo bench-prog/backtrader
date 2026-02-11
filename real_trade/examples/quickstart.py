@@ -6,6 +6,11 @@ quickstart.py - 快速上手示例
 演示如何用最少代码启动一个策略回测。
 """
 
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
+
 import backtrader as bt
 from real_trade.strategies.trend import MACrossStrategy
 
@@ -30,13 +35,16 @@ def main():
 
 def main_manual():
     # 方式二：手动组装
-    from real_trade.binance import create_binance_engine
+    from real_trade.brokers import BinanceBroker
+    from real_trade.feeds import BinanceData
+    from real_trade.stores import BinanceStore
 
-    store, broker, data = create_binance_engine(
+    store = BinanceStore.get_instance(testnet=False)  # 回测不需要 testnet
+    broker = BinanceBroker(store, paper_trading=True, cash=10000.0)
+    data = BinanceData.from_timeframe_string(
+        "1h",
+        store,
         symbol="BTC/USDT",
-        timeframe="1h",
-        testnet=True,
-        paper_trading=True,
         backtest=True,
         historical_limit=500,
     )

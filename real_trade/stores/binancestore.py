@@ -11,7 +11,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import threading
 from typing import Optional
 
-from real_trade.common import BaseStore
+from .basestore import BaseStore
 
 
 class BinanceStore(BaseStore):
@@ -92,4 +92,4 @@ class BinanceStore(BaseStore):
                 )
 
         mode = "Demo Trading" if self.testnet else "Production"
-        print(f"BinanceStore: {mode}, market_type={market_type}")
+        print(f"[BinanceStore] {mode}, market_type={market_type}")

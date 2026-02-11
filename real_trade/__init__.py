@@ -6,8 +6,9 @@ Real Trade Module
 实盘交易模块集合。
 
 模块结构:
-    common/          通用基类（BaseStore, BaseBroker, BaseData, BaseWebSocket）
-    binance/         Binance 交易所
+    stores/          交易所连接管理（BaseStore, BinanceStore, ...）
+    brokers/         交易经纪商（BaseBroker, BinanceBroker, ...）
+    feeds/           数据源（BaseData, BinanceData, BaseWebSocket, ...）
     strategies/      共享策略库（趋势/均值回归/动量/网格/复合）
     risk/            风控模块（仓位管理/止损/限制/回撤控制）
     engine/          交易引擎（统一运行器/调度/生命周期）
@@ -16,18 +17,61 @@ Real Trade Module
     utils/           公共工具（日志/配置/校验/重试/时间）
     tests/           统一测试
     examples/        使用示例
+
+快速开始::
+
+    from real_trade.stores import BinanceStore
+    from real_trade.brokers import BinanceBroker
+    from real_trade.feeds import BinanceData
+    import backtrader as bt
+
+    store = BinanceStore.get_instance(testnet=True)
+    broker = BinanceBroker(store, paper_trading=True)
+    data = BinanceData.from_timeframe_string("1h", store, symbol="BTC/USDT", backtest=True)
+
+    cerebro = bt.Cerebro()
+    cerebro.setbroker(broker)
+    cerebro.adddata(data)
+    cerebro.addstrategy(MyStrategy)
+    cerebro.run()
 """
 
 __version__ = "2.0.0"
 
-from . import binance, engine, monitor, notifications, risk, strategies, utils
+from . import (
+    brokers,
+    engine,
+    feeds,
+    monitor,
+    notifications,
+    risk,
+    stores,
+    strategies,
+    utils,
+)
+from .brokers import BaseBroker, BinanceBroker
+from .feeds import BaseData, BaseWebSocket, BinanceData
+
+# 便捷导入
+from .stores import BaseStore, BinanceStore
 
 __all__ = [
-    "binance",
+    # 模块
+    "stores",
+    "brokers",
+    "feeds",
     "strategies",
     "risk",
     "engine",
     "monitor",
     "notifications",
     "utils",
+    # 核心类
+    "BaseStore",
+    "BinanceStore",
+    "BaseBroker",
+    "BinanceBroker",
+    "BaseData",
+    "BinanceData",
+    "BaseWebSocket",
 ]

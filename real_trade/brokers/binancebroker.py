@@ -8,10 +8,10 @@ BinanceBroker - Binance 交易经纪商
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from real_trade.common import BaseBroker
+from .basebroker import BaseBroker
 
 
 class BinanceBroker(BaseBroker):
-    """Binance Broker — 直接复用 BaseBroker。"""
+    """Binance Broker - 直接复用 BaseBroker。"""
 
     pass

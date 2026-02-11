@@ -2,36 +2,49 @@
 
 ## 配置方式
 
-系统支持三种配置方式，统一通过 `create_binance_engine_from_config()` 使用：
+系统支持三种配置方式：
 
 ### 1. JSON 文件
 
 ```python
-from real_trade.binance import create_binance_engine_from_config
+from real_trade.utils.config import GlobalConfig
+from real_trade.stores import BinanceStore
+from real_trade.brokers import BinanceBroker
+from real_trade.feeds import BinanceData
 
-store, broker, data = create_binance_engine_from_config("my_config.json")
+cfg = GlobalConfig.from_json("config/binance/my_config.json")
+
+store = BinanceStore.get_instance(
+    apikey=cfg.apikey,
+    secret=cfg.secret,
+    testnet=cfg.testnet,
+    market_type=cfg.market_type,
+)
+broker = BinanceBroker(store, paper_trading=cfg.paper_trading, cash=cfg.cash)
+data = BinanceData.from_timeframe_string(cfg.timeframe, store, symbol=cfg.symbol, backtest=cfg.backtest)
 ```
 
 ### 2. GlobalConfig 对象
 
 ```python
-from real_trade.utils import GlobalConfig
-from real_trade.binance import create_binance_engine_from_config
+from real_trade.utils.config import GlobalConfig
 
 cfg = GlobalConfig(symbol="ETH/USDT", timeframe="15m", backtest=True)
-store, broker, data = create_binance_engine_from_config(cfg)
 ```
 
-### 3. 字典
+### 3. 使用 TradingRunner（推荐）
 
 ```python
-from real_trade.binance import create_binance_engine_from_config
+from real_trade.engine import TradingRunner
 
-store, broker, data = create_binance_engine_from_config({
-    "symbol": "ETH/USDT",
-    "timeframe": "15m",
-    "backtest": True,
-})
+runner = TradingRunner(
+    exchange="binance",
+    symbol="BTC/USDT",
+    timeframe="1h",
+    strategy_cls=MyStrategy,
+    backtest=True,
+)
+runner.run()
 ```
 
 ## JSON 配置格式
@@ -52,17 +65,6 @@ store, broker, data = create_binance_engine_from_config({
   "commission": 0.001,
   "backtest": true,
   "historical_limit": 500
-}
-```
-
-也兼容旧版**嵌套结构**：
-
-```json
-{
-  "api": {"apikey": "", "secret": "", "testnet": true, "market_type": "future"},
-  "trading": {"paper_trading": true, "initial_cash": 10000.0, "commission": 0.001},
-  "data": {"symbol": "BTC/USDT", "timeframe": "15m", "backtest": true, "historical_limit": 500},
-  "proxy": {"proxy_url": ""}
 }
 ```
 
@@ -113,10 +115,10 @@ store, broker, data = create_binance_engine_from_config({
 
 ```bash
 # 交互式生成配置文件
-python tools/config_generator.py
+python real_trade/tools/binance/config_generator.py
 
 # 验证配置文件
-python tools/config_validator.py my_config.json
+python real_trade/tools/binance/config_validator.py my_config.json
 ```
 
 ## 获取 Demo Trading API 密钥

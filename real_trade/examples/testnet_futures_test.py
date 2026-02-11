@@ -17,9 +17,9 @@ Binance Futures Testnet 连接测试
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../.."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
 
-from real_trade.binance import BinanceStore
+from real_trade.stores import BinanceStore
 
 
 def test_connection():
@@ -74,11 +74,11 @@ def test_connection():
             print(f"✓ 最新价格: ${ticker['last']:,.2f}")
 
             # 某些字段在 Futures 市场可能为 None，需要安全处理
-            if ticker.get('bid') is not None:
+            if ticker.get("bid") is not None:
                 print(f"  买一价: ${ticker['bid']:,.2f}")
-            if ticker.get('ask') is not None:
+            if ticker.get("ask") is not None:
                 print(f"  卖一价: ${ticker['ask']:,.2f}")
-            if ticker.get('baseVolume') is not None:
+            if ticker.get("baseVolume") is not None:
                 print(f"  24h 成交量: {ticker['baseVolume']:,.2f} BTC")
         except Exception as e:
             print(f"✗ 获取市场数据失败: {e}")
@@ -92,16 +92,18 @@ def test_connection():
             positions = store.get_positions()
 
             # 过滤出有持仓的
-            active_positions = [p for p in positions if float(p.get('contracts', 0)) != 0]
+            active_positions = [
+                p for p in positions if float(p.get("contracts", 0)) != 0
+            ]
 
             if active_positions:
                 print(f"✓ 找到 {len(active_positions)} 个持仓\n")
                 for pos in active_positions:
-                    symbol = pos.get('symbol', 'unknown')
-                    contracts = float(pos.get('contracts', 0))
-                    side = pos.get('side', 'unknown')
-                    entry_price = float(pos.get('entryPrice', 0))
-                    unrealized_pnl = float(pos.get('unrealizedPnl', 0))
+                    symbol = pos.get("symbol", "unknown")
+                    contracts = float(pos.get("contracts", 0))
+                    side = pos.get("side", "unknown")
+                    entry_price = float(pos.get("entryPrice", 0))
+                    unrealized_pnl = float(pos.get("unrealizedPnl", 0))
 
                     print(f"  交易对: {symbol}")
                     print(f"  方向: {side}")

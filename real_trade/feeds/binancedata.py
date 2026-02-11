@@ -8,10 +8,10 @@ BinanceData - Binance 数据源
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from real_trade.common import BaseData
+from .basedata import BaseData
 
 
 class BinanceData(BaseData):
-    """Binance Data Feed — 直接复用 BaseData。"""
+    """Binance Data Feed - 直接复用 BaseData。"""
 
     pass

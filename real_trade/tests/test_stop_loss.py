@@ -14,7 +14,7 @@ import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../.."))
 
-from real_trade.binance import BinanceStore
+from real_trade.stores import BinanceStore
 
 
 def test_stop_loss_order():
@@ -42,7 +42,7 @@ def test_stop_loss_order():
 
         # 获取当前价格
         ticker = exchange.fetch_ticker("ETH/USDT:USDT")
-        current_price = ticker['last']
+        current_price = ticker["last"]
         print(f"当前 ETH 价格: ${current_price:,.2f}\n")
 
         # 测试参数
@@ -67,13 +67,13 @@ def test_stop_loss_order():
 
         # 查看持仓
         positions = exchange.fetch_positions()
-        active_pos = [p for p in positions if float(p.get('contracts', 0)) != 0]
+        active_pos = [p for p in positions if float(p.get("contracts", 0)) != 0]
 
         entry_price = None
         for pos in active_pos:
-            if pos['symbol'] == 'ETH/USDT:USDT':
-                entry_price = float(pos['entryPrice'])
-                print(f"✓ 持仓建立成功")
+            if pos["symbol"] == "ETH/USDT:USDT":
+                entry_price = float(pos["entryPrice"])
+                print("✓ 持仓建立成功")
                 print(f"  开仓价: ${entry_price:,.2f}")
                 print()
 
@@ -109,7 +109,7 @@ def test_stop_loss_order():
             amount=test_amount,
             params={
                 "stopPrice": stop_price,
-            }
+            },
         )
 
         print("✓ 止损单已设置")
@@ -152,7 +152,7 @@ def test_stop_loss_order():
 
         print("取消止损单...")
         try:
-            exchange.cancel_order(stop_order['id'], "ETH/USDT:USDT")
+            exchange.cancel_order(stop_order["id"], "ETH/USDT:USDT")
             print("✓ 止损单已取消\n")
         except Exception as e:
             print(f"⚠️ 取消失败: {e}\n")
@@ -169,9 +169,9 @@ def test_stop_loss_order():
 
         # 查看最终持仓
         positions = exchange.fetch_positions()
-        active_pos = [p for p in positions if float(p.get('contracts', 0)) != 0]
+        active_pos = [p for p in positions if float(p.get("contracts", 0)) != 0]
 
-        eth_pos = [p for p in active_pos if p['symbol'] == 'ETH/USDT:USDT']
+        eth_pos = [p for p in active_pos if p["symbol"] == "ETH/USDT:USDT"]
         if not eth_pos:
             print("✓ 持仓已完全平仓")
         else:
@@ -197,6 +197,7 @@ def test_stop_loss_order():
     except Exception as e:
         print(f"\n✗ 测试失败: {e}")
         import traceback
+
         traceback.print_exc()
 
 

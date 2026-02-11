@@ -13,7 +13,7 @@ import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../.."))
 
-from real_trade.binance import BinanceStore
+from real_trade.stores import BinanceStore
 
 
 def test_limit_order():
@@ -41,11 +41,11 @@ def test_limit_order():
 
         # 获取当前价格
         ticker = exchange.fetch_ticker("ETH/USDT:USDT")
-        current_price = ticker['last']
-        bid = ticker['bid']
-        ask = ticker['ask']
+        current_price = ticker["last"]
+        bid = ticker["bid"]
+        ask = ticker["ask"]
 
-        print(f"当前行情:")
+        print("当前行情:")
         print(f"  最新价: ${current_price:,.2f}")
         print(f"  买一价: ${bid:,.2f}")
         print(f"  卖一价: ${ask:,.2f}")
@@ -68,7 +68,9 @@ def test_limit_order():
         print(f"限价: ${buy_price:,.2f} (略高于卖一价，确保成交)")
         print(f"预计成本: ${test_amount * buy_price:.2f}\n")
 
-        buy_order = exchange.create_limit_buy_order("ETH/USDT:USDT", test_amount, buy_price)
+        buy_order = exchange.create_limit_buy_order(
+            "ETH/USDT:USDT", test_amount, buy_price
+        )
 
         print("✓ 买入订单已提交")
         print(f"  订单 ID: {buy_order['id']}")
@@ -81,20 +83,20 @@ def test_limit_order():
         print("等待订单成交...")
         for i in range(10):
             time.sleep(2)
-            order_status = exchange.fetch_order(buy_order['id'], "ETH/USDT:USDT")
+            order_status = exchange.fetch_order(buy_order["id"], "ETH/USDT:USDT")
 
-            if order_status['status'] == 'closed':
-                print(f"✓ 订单已成交 (等待 {(i+1)*2} 秒)")
+            if order_status["status"] == "closed":
+                print(f"✓ 订单已成交 (等待 {(i + 1) * 2} 秒)")
                 print(f"  成交数量: {order_status['filled']} ETH")
                 print(f"  成交价格: ${order_status.get('average', 0):,.2f}")
                 break
-            elif order_status['status'] == 'open':
-                print(f"  [{i+1}] 订单未成交，继续等待...")
+            elif order_status["status"] == "open":
+                print(f"  [{i + 1}] 订单未成交，继续等待...")
             else:
                 print(f"  订单状态: {order_status['status']}")
         else:
             print("⚠️ 订单等待超时，取消订单...")
-            exchange.cancel_order(buy_order['id'], "ETH/USDT:USDT")
+            exchange.cancel_order(buy_order["id"], "ETH/USDT:USDT")
             print("✗ 测试失败：订单未能成交")
             return
 
@@ -103,13 +105,13 @@ def test_limit_order():
         # 查看持仓
         print("查询持仓...")
         positions = exchange.fetch_positions()
-        active_pos = [p for p in positions if float(p.get('contracts', 0)) != 0]
+        active_pos = [p for p in positions if float(p.get("contracts", 0)) != 0]
 
         eth_pos = None
         for pos in active_pos:
-            if pos['symbol'] == 'ETH/USDT:USDT':
+            if pos["symbol"] == "ETH/USDT:USDT":
                 eth_pos = pos
-                print(f"✓ 持仓建立成功")
+                print("✓ 持仓建立成功")
                 print(f"  方向: {pos['side']}")
                 print(f"  数量: {float(pos['contracts']):.6f} ETH")
                 print(f"  开仓价: ${float(pos['entryPrice']):,.2f}")
@@ -128,7 +130,7 @@ def test_limit_order():
 
         # 重新获取行情
         ticker = exchange.fetch_ticker("ETH/USDT:USDT")
-        bid = ticker['bid']
+        bid = ticker["bid"]
 
         # 设置限价略低于买一价，确保能成交
         sell_price = round(bid * 0.9995, 2)  # 低于买一价 0.05%
@@ -136,7 +138,9 @@ def test_limit_order():
         print(f"平仓数量: {test_amount} ETH")
         print(f"限价: ${sell_price:,.2f} (略低于买一价，确保成交)\n")
 
-        sell_order = exchange.create_limit_sell_order("ETH/USDT:USDT", test_amount, sell_price)
+        sell_order = exchange.create_limit_sell_order(
+            "ETH/USDT:USDT", test_amount, sell_price
+        )
 
         print("✓ 卖出订单已提交")
         print(f"  订单 ID: {sell_order['id']}")
@@ -149,20 +153,20 @@ def test_limit_order():
         print("等待订单成交...")
         for i in range(10):
             time.sleep(2)
-            order_status = exchange.fetch_order(sell_order['id'], "ETH/USDT:USDT")
+            order_status = exchange.fetch_order(sell_order["id"], "ETH/USDT:USDT")
 
-            if order_status['status'] == 'closed':
-                print(f"✓ 订单已成交 (等待 {(i+1)*2} 秒)")
+            if order_status["status"] == "closed":
+                print(f"✓ 订单已成交 (等待 {(i + 1) * 2} 秒)")
                 print(f"  成交数量: {order_status['filled']} ETH")
                 print(f"  成交价格: ${order_status.get('average', 0):,.2f}")
                 break
-            elif order_status['status'] == 'open':
-                print(f"  [{i+1}] 订单未成交，继续等待...")
+            elif order_status["status"] == "open":
+                print(f"  [{i + 1}] 订单未成交，继续等待...")
             else:
                 print(f"  订单状态: {order_status['status']}")
         else:
             print("⚠️ 订单等待超时，取消订单...")
-            exchange.cancel_order(sell_order['id'], "ETH/USDT:USDT")
+            exchange.cancel_order(sell_order["id"], "ETH/USDT:USDT")
             print("✗ 测试失败：订单未能成交")
             return
 
@@ -171,9 +175,9 @@ def test_limit_order():
         # 查看平仓后的持仓
         print("查询平仓后持仓...")
         positions = exchange.fetch_positions()
-        active_pos = [p for p in positions if float(p.get('contracts', 0)) != 0]
+        active_pos = [p for p in positions if float(p.get("contracts", 0)) != 0]
 
-        eth_pos = [p for p in active_pos if p['symbol'] == 'ETH/USDT:USDT']
+        eth_pos = [p for p in active_pos if p["symbol"] == "ETH/USDT:USDT"]
         if not eth_pos:
             print("✓ 持仓已完全平仓")
         else:
@@ -193,6 +197,7 @@ def test_limit_order():
     except Exception as e:
         print(f"\n✗ 测试失败: {e}")
         import traceback
+
         traceback.print_exc()
 
 

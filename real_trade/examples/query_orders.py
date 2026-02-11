@@ -9,9 +9,9 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../.."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
 
-from real_trade.binance import BinanceStore
+from real_trade.stores import BinanceStore
 
 
 def query_specific_order():
@@ -55,19 +55,23 @@ def query_specific_order():
                 print("-" * 60)
 
                 for i, order in enumerate(all_orders[:10], 1):
-                    order_id = order['id']
-                    timestamp = order.get('timestamp', 0)
-                    datetime_str = order.get('datetime', 'N/A')
-                    side = order['side']
-                    amount = order['amount']
-                    status = order['status']
-                    price = order.get('average') or order.get('price', 'N/A')
+                    order_id = order["id"]
+                    timestamp = order.get("timestamp", 0)
+                    datetime_str = order.get("datetime", "N/A")
+                    side = order["side"]
+                    amount = order["amount"]
+                    status = order["status"]
+                    price = order.get("average") or order.get("price", "N/A")
 
                     print(f"{i}. 订单 ID: {order_id}")
                     print(f"   时间: {datetime_str}")
                     print(f"   方向: {side.upper()}")
                     print(f"   数量: {amount} ETH")
-                    print(f"   价格: ${price:,.2f}" if isinstance(price, (int, float)) else f"   价格: {price}")
+                    print(
+                        f"   价格: ${price:,.2f}"
+                        if isinstance(price, (int, float))
+                        else f"   价格: {price}"
+                    )
                     print(f"   状态: {status}")
                     print()
 
@@ -83,7 +87,9 @@ def query_specific_order():
                 print()
                 print("3. 搜索以下订单 ID（任选其一）:")
                 for order in all_orders[:3]:
-                    print(f"   - {order['id']} ({order['side'].upper()}, {order['datetime']})")
+                    print(
+                        f"   - {order['id']} ({order['side'].upper()}, {order['datetime']})"
+                    )
                 print()
                 print("4. 确保设置:")
                 print("   - 交易对: ETHUSDT")
@@ -100,7 +106,7 @@ def query_specific_order():
         print("=" * 60)
 
         positions = exchange.fetch_positions()
-        active_pos = [p for p in positions if float(p.get('contracts', 0)) != 0]
+        active_pos = [p for p in positions if float(p.get("contracts", 0)) != 0]
 
         if active_pos:
             print(f"✓ 找到 {len(active_pos)} 个活跃持仓\n")
@@ -117,6 +123,7 @@ def query_specific_order():
     except Exception as e:
         print(f"\n✗ 查询失败: {e}")
         import traceback
+
         traceback.print_exc()
 
 

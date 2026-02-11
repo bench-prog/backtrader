@@ -56,7 +56,7 @@ class BaseBroker(bt.BrokerBase):
 
         mode = "Paper Trading" if self.params.paper_trading else "Live Trading"
         print(
-            f"{self.__class__.__name__} initialized: mode={mode}, cash={self.params.cash}"
+            f"[Broker] {self.__class__.__name__} initialized: mode={mode}, cash={self.params.cash}"
         )
 
     def getcash(self) -> float:
@@ -67,7 +67,7 @@ class BaseBroker(bt.BrokerBase):
         try:
             return self.store.get_balance(self.params.base_currency)
         except Exception as e:
-            print(f"Error fetching cash: {e}")
+            print(f"[Broker] Error fetching cash: {e}")
             return 0.0
 
     def setcash(self, cash: float):
@@ -88,7 +88,7 @@ class BaseBroker(bt.BrokerBase):
         try:
             return self.store.get_total_value(self.params.base_currency)
         except Exception as e:
-            print(f"Error fetching portfolio value: {e}")
+            print(f"[Broker] Error fetching portfolio value: {e}")
             return self.getcash()
 
     def getposition(self, data, clone=True) -> bt.Position:
@@ -110,7 +110,7 @@ class BaseBroker(bt.BrokerBase):
                 return bt.Position(size, price)
             return bt.Position(0, 0)
         except Exception as e:
-            print(f"Error fetching position: {e}")
+            print(f"[Broker] Error fetching position: {e}")
             return bt.Position(0, 0)
 
     def buy(
@@ -252,11 +252,11 @@ class BaseBroker(bt.BrokerBase):
             self.notify(order)
 
             print(
-                f"✓ Order submitted: {ccxt_order['id']} - {side} {size} {symbol} @ {price or 'market'}"
+                f"[Broker] Order submitted: {ccxt_order['id']} - {side} {size} {symbol} @ {price or 'market'}"
             )
 
         except Exception as e:
-            print(f"✗ Error submitting order: {e}")
+            print(f"[Broker] Error submitting order: {e}")
             order.reject()
             self.notify(order)
 
@@ -358,9 +358,9 @@ class BaseBroker(bt.BrokerBase):
                 self.exchange.cancel_order(order_id, symbol)
                 order.cancel()
                 self.notify(order)
-                print(f"✓ Order cancelled: {order_id}")
+                print(f"[Broker] Order cancelled: {order_id}")
             except Exception as e:
-                print(f"✗ Error cancelling order: {e}")
+                print(f"[Broker] Error cancelling order: {e}")
 
         if order.ref in self.open_orders:
             del self.open_orders[order.ref]

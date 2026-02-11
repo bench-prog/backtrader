@@ -3,12 +3,11 @@
 """
 使用配置文件的 Binance 交易示例
 
-演示如何使用 JSON 配置文件创建 Binance 交易引擎。
+演示如何使用配置创建 Binance 交易引擎。
 
 运行模式：
 ---------
 1. 回测模式（默认）：
-   使用扁平配置或嵌套配置 JSON
    - 历史数据回测
    - 本地模拟订单
    - 不需要 API 密钥
@@ -29,9 +28,12 @@ import sys
 
 import backtrader as bt
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../.."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
 
-from real_trade.binance import create_binance_engine_from_config
+from real_trade.brokers import BinanceBroker
+from real_trade.feeds import BinanceData
+from real_trade.stores import BinanceStore
+from real_trade.utils.config import GlobalConfig
 
 
 class ConfigurableStrategy(bt.Strategy):
@@ -60,13 +62,13 @@ class ConfigurableStrategy(bt.Strategy):
         self.sell_count = 0
 
         print("\n" + "=" * 60)
-        print("策略初始化完成（从配置文件加载参数）")
+        print("Strategy initialized")
         print("=" * 60)
-        print(f"RSI 周期: {self.p.rsi_period}")
-        print(f"RSI 范围: {self.p.rsi_low} - {self.p.rsi_high}")
-        print(f"均线周期: {self.p.ma_fast}/{self.p.ma_slow}")
-        print(f"交易规模: {self.p.trade_size_pct * 100}% 的可用资金")
-        print(f"止损: {self.p.stop_loss_pct}%")
+        print(f"RSI period: {self.p.rsi_period}")
+        print(f"RSI range: {self.p.rsi_low} - {self.p.rsi_high}")
+        print(f"MA periods: {self.p.ma_fast}/{self.p.ma_slow}")
+        print(f"Trade size: {self.p.trade_size_pct * 100}%")
+        print(f"Stop loss: {self.p.stop_loss_pct}%")
         print("=" * 60 + "\n")
 
     def log(self, txt, dt=None):
@@ -141,19 +143,47 @@ class ConfigurableStrategy(bt.Strategy):
         )
 
 
+def create_engine_from_config(cfg: GlobalConfig):
+    """从配置创建交易引擎"""
+    # 回测模式不需要 API 密钥
+    use_testnet = cfg.testnet if not cfg.backtest else False
+
+    store = BinanceStore.get_instance(
+        apikey=cfg.apikey if not cfg.backtest else "",
+        secret=cfg.secret if not cfg.backtest else "",
+        testnet=use_testnet,
+        proxy=cfg.proxy,
+        market_type=cfg.market_type,
+    )
+
+    broker = BinanceBroker(store, paper_trading=cfg.paper_trading, cash=cfg.cash)
+    if cfg.commission > 0:
+        broker.setcommission(commission=cfg.commission)
+
+    data_kwargs = {}
+    if cfg.fromdate:
+        data_kwargs["fromdate"] = datetime.datetime.fromisoformat(cfg.fromdate)
+    if cfg.todate:
+        data_kwargs["todate"] = datetime.datetime.fromisoformat(cfg.todate)
+    if cfg.historical_limit != 1000:
+        data_kwargs["historical_limit"] = cfg.historical_limit
+
+    data = BinanceData.from_timeframe_string(
+        cfg.timeframe,
+        store,
+        symbol=cfg.symbol,
+        backtest=cfg.backtest,
+        **data_kwargs,
+    )
+
+    return store, broker, data
+
+
 def main():
     """主函数"""
 
-    # ----- 方法1: 从 JSON 配置文件 -----
-    # store, broker, data = create_binance_engine_from_config("my_config.json")
-
-    # ----- 方法2: 从 GlobalConfig 对象 -----
-    # from real_trade.utils import GlobalConfig
-    # cfg = GlobalConfig(symbol="ETH/USDT", backtest=True, market_type="future")
-    # store, broker, data = create_binance_engine_from_config(cfg)
-
-    # ----- 方法3: 从字典 -----
-    store, broker, data = create_binance_engine_from_config(
+    # ----- 方法1: 从字典创建配置 -----
+    cfg = GlobalConfig.from_dict(
         {
             "symbol": "BTC/USDT",
             "timeframe": "15m",
@@ -163,6 +193,14 @@ def main():
             "market_type": "future",
         }
     )
+
+    # ----- 方法2: 从 JSON 文件 -----
+    # cfg = GlobalConfig.from_json("config/binance/spot_testnet.json")
+
+    # ----- 方法3: 直接创建 GlobalConfig -----
+    # cfg = GlobalConfig(symbol="ETH/USDT", backtest=True, market_type="future")
+
+    store, broker, data = create_engine_from_config(cfg)
 
     cerebro = bt.Cerebro()
     cerebro.setbroker(broker)
@@ -185,8 +223,8 @@ def main():
     cerebro.addanalyzer(bt.analyzers.Returns, _name="returns")
     cerebro.addanalyzer(bt.analyzers.TradeAnalyzer, _name="trades")
 
-    print(f"\n初始账户价值: ${cerebro.broker.getvalue():,.2f}")
-    print("开始回测...\n")
+    print(f"\nInitial value: ${cerebro.broker.getvalue():,.2f}")
+    print("Starting backtest...\n")
 
     start_time = datetime.datetime.now()
     results = cerebro.run()
@@ -195,8 +233,8 @@ def main():
 
     # 最终结果
     print(f"\n{'=' * 60}")
-    print(f"回测完成 ({duration:.2f}s)")
-    print(f"最终价值: ${cerebro.broker.getvalue():,.2f}")
+    print(f"Backtest complete ({duration:.2f}s)")
+    print(f"Final value: ${cerebro.broker.getvalue():,.2f}")
 
     trade_analysis = strat.analyzers.trades.get_analysis()
     try:
@@ -209,9 +247,9 @@ def main():
     max_dd = drawdown.get("max", {}).get("drawdown", 0)
 
     print(
-        f"总交易: {total_trades}  最大回撤: {max_dd:.2f}%  夏普: {sharpe:.2f}"
+        f"Total trades: {total_trades}  Max DD: {max_dd:.2f}%  Sharpe: {sharpe:.2f}"
         if sharpe
-        else f"总交易: {total_trades}  最大回撤: {max_dd:.2f}%"
+        else f"Total trades: {total_trades}  Max DD: {max_dd:.2f}%"
     )
     print(f"{'=' * 60}\n")
 

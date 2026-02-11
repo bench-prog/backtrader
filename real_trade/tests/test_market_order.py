@@ -13,7 +13,7 @@ import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../.."))
 
-from real_trade.binance import BinanceStore
+from real_trade.stores import BinanceStore
 
 
 def test_market_order():
@@ -41,12 +41,12 @@ def test_market_order():
 
         # 获取当前价格
         ticker = exchange.fetch_ticker("ETH/USDT:USDT")
-        current_price = ticker['last']
+        current_price = ticker["last"]
         print(f"当前 ETH 价格: ${current_price:,.2f}\n")
 
         # 获取初始余额
         balance_before = exchange.fetch_balance()
-        usdt_before = balance_before['USDT']['total']
+        usdt_before = balance_before["USDT"]["total"]
         print(f"初始余额: {usdt_before:.2f} USDT\n")
 
         # 测试参数
@@ -76,12 +76,12 @@ def test_market_order():
         # 查看持仓
         print("查询持仓...")
         positions = exchange.fetch_positions()
-        active_pos = [p for p in positions if float(p.get('contracts', 0)) != 0]
+        active_pos = [p for p in positions if float(p.get("contracts", 0)) != 0]
 
         if active_pos:
             for pos in active_pos:
-                if pos['symbol'] == 'ETH/USDT:USDT':
-                    print(f"✓ 持仓建立成功")
+                if pos["symbol"] == "ETH/USDT:USDT":
+                    print("✓ 持仓建立成功")
                     print(f"  方向: {pos['side']}")
                     print(f"  数量: {float(pos['contracts']):.6f} ETH")
                     print(f"  开仓价: ${float(pos['entryPrice']):,.2f}")
@@ -113,9 +113,9 @@ def test_market_order():
         # 查看平仓后的持仓
         print("查询平仓后持仓...")
         positions = exchange.fetch_positions()
-        active_pos = [p for p in positions if float(p.get('contracts', 0)) != 0]
+        active_pos = [p for p in positions if float(p.get("contracts", 0)) != 0]
 
-        eth_pos = [p for p in active_pos if p['symbol'] == 'ETH/USDT:USDT']
+        eth_pos = [p for p in active_pos if p["symbol"] == "ETH/USDT:USDT"]
         if not eth_pos:
             print("✓ 持仓已完全平仓")
         else:
@@ -124,7 +124,7 @@ def test_market_order():
 
         # 获取最终余额
         balance_after = exchange.fetch_balance()
-        usdt_after = balance_after['USDT']['total']
+        usdt_after = balance_after["USDT"]["total"]
 
         print("=" * 60)
         print("测试结果")
@@ -145,6 +145,7 @@ def test_market_order():
     except Exception as e:
         print(f"\n✗ 测试失败: {e}")
         import traceback
+
         traceback.print_exc()
 
 

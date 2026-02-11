@@ -9,9 +9,9 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../.."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
 
-from real_trade.binance import BinanceStore
+from real_trade.stores import BinanceStore
 
 
 def check_available_symbols():
@@ -50,7 +50,9 @@ def check_available_symbols():
         print("2. ETH 相关的永续合约")
         print("=" * 60)
 
-        eth_markets = {k: v for k, v in markets.items() if 'ETH' in k and v.get('type') == 'swap'}
+        eth_markets = {
+            k: v for k, v in markets.items() if "ETH" in k and v.get("type") == "swap"
+        }
 
         if eth_markets:
             print(f"找到 {len(eth_markets)} 个 ETH 永续合约：\n")
@@ -64,9 +66,9 @@ def check_available_symbols():
                 print(f"  Active: {market.get('active', False)}")
 
                 # 检查最小订单大小
-                limits = market.get('limits', {})
-                amount_limits = limits.get('amount', {})
-                cost_limits = limits.get('cost', {})
+                limits = market.get("limits", {})
+                amount_limits = limits.get("amount", {})
+                cost_limits = limits.get("cost", {})
 
                 print(f"  最小数量: {amount_limits.get('min', 'N/A')}")
                 print(f"  最小金额: {cost_limits.get('min', 'N/A')}")
@@ -79,7 +81,12 @@ def check_available_symbols():
         print("3. 常用永续合约（USDT 结算）")
         print("=" * 60)
 
-        common_symbols = ['BTC/USDT:USDT', 'ETH/USDT:USDT', 'BNB/USDT:USDT', 'SOL/USDT:USDT']
+        common_symbols = [
+            "BTC/USDT:USDT",
+            "ETH/USDT:USDT",
+            "BNB/USDT:USDT",
+            "SOL/USDT:USDT",
+        ]
 
         for symbol in common_symbols:
             if symbol in markets:
@@ -88,8 +95,8 @@ def check_available_symbols():
                 print(f"  ID: {market['id']}")
                 print(f"  Active: {market.get('active', False)}")
 
-                limits = market.get('limits', {})
-                cost_limits = limits.get('cost', {})
+                limits = market.get("limits", {})
+                cost_limits = limits.get("cost", {})
                 print(f"  最小订单金额: {cost_limits.get('min', 'N/A')} USDT")
                 print()
             else:
@@ -100,7 +107,7 @@ def check_available_symbols():
         print("4. 测试获取 ETH 行情")
         print("=" * 60)
 
-        test_symbols = ['ETH/USDT', 'ETH/USDT:USDT', 'ETHUSDT']
+        test_symbols = ["ETH/USDT", "ETH/USDT:USDT", "ETHUSDT"]
 
         for symbol in test_symbols:
             try:
@@ -154,6 +161,7 @@ def check_available_symbols():
     except Exception as e:
         print(f"\n✗ 检查失败: {e}")
         import traceback
+
         traceback.print_exc()
 
 

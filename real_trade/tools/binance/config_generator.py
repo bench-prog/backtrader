@@ -93,10 +93,12 @@ def main():
         json.dump(config, f, indent=2, ensure_ascii=False)
 
     print("\n" + "=" * 60)
-    print(f"配置文件已生成: {config_path}")
-    print("\n使用方法:")
-    print("  from real_trade.binance import create_binance_engine_from_config")
-    print(f'  store, broker, data = create_binance_engine_from_config("{filename}")')
+    print(f"Config saved: {config_path}")
+    print("\nUsage:")
+    print("  from real_trade.utils.config import GlobalConfig")
+    print("  from real_trade.stores import BinanceStore")
+    print(f'  cfg = GlobalConfig.from_json("{filename}")')
+    print("  store = BinanceStore.get_instance(apikey=cfg.apikey, ...)")
     print("=" * 60 + "\n")
 
 

@@ -63,7 +63,7 @@ class BaseData(bt.DataBase):
         self.historical_index = 0
 
         print(
-            f"{self.__class__.__name__} initialized: {self.params.symbol}, "
+            f"[Data] {self.__class__.__name__} initialized: {self.params.symbol}, "
             f"timeframe={self.params.ccxt_timeframe}, backtest={self.params.backtest}"
         )
 
@@ -105,7 +105,7 @@ class BaseData(bt.DataBase):
         limit = self.params.historical_limit
         all_ohlcv = []
 
-        print(f"Loading historical data for {self.params.symbol}...")
+        print(f"[Data] Loading historical data for {self.params.symbol}...")
 
         try:
             while True:
@@ -137,10 +137,10 @@ class BaseData(bt.DataBase):
                 since = ohlcv[-1][0] + 1
 
             self.historical_data = all_ohlcv
-            print(f"✓ Loaded {len(self.historical_data)} candles")
+            print(f"[Data] Loaded {len(self.historical_data)} candles")
 
         except Exception as e:
-            print(f"✗ Error loading historical data: {e}")
+            print(f"[Data] Error loading historical data: {e}")
             self.historical_data = []
 
     def _load(self):
@@ -195,7 +195,7 @@ class BaseData(bt.DataBase):
             return True
 
         except Exception as e:
-            print(f"Error loading live data: {e}")
+            print(f"[Data] Error loading live data: {e}")
             return None
 
     def islive(self) -> bool:

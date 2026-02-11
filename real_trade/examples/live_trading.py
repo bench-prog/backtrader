@@ -6,6 +6,11 @@ live_trading.py - 实盘交易示例
 演示完整的实盘交易流程：引擎 + 风控 + 监控 + 通知。
 """
 
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
+
 from real_trade.engine import LifecycleManager, TradingRunner
 from real_trade.monitor import HealthChecker, PerformanceTracker, Reporter
 from real_trade.risk import RiskManager
