@@ -7,6 +7,33 @@ Utils - 公共工具模块
 """
 
 from .config import GlobalConfig
+from .connection_manager import (
+    Connection,
+    ConnectionPool,
+    ConnectionState,
+    ConnectionStats,
+    HeartbeatMonitor,
+    HTTPConnection,
+    WebSocketConnection,
+    get_connection_manager,
+    get_heartbeat_monitor,
+    shutdown_connection_managers,
+)
+from .exceptions import (
+    BusinessError,
+    ConfigError,
+    ConnectionError,
+    DataError,
+    ErrorCode,
+    NetworkError,
+    RealTradeError,
+    SystemError,
+    TimeoutError,
+    TradingError,
+    exception_handler,
+    handle_exception,
+    safe_call,
+)
 from .logger import get_logger, setup_logger
 from .retry import RetryConfig, retry
 from .time_utils import (
@@ -32,4 +59,29 @@ __all__ = [
     "timestamp_to_datetime",
     "datetime_to_timestamp",
     "timeframe_to_seconds",
+    # Exceptions
+    "ErrorCode",
+    "RealTradeError",
+    "SystemError",
+    "NetworkError",
+    "ConnectionError",
+    "TimeoutError",
+    "DataError",
+    "TradingError",
+    "ConfigError",
+    "BusinessError",
+    "handle_exception",
+    "safe_call",
+    "exception_handler",
+    # Connection Management
+    "ConnectionState",
+    "ConnectionStats",
+    "Connection",
+    "HTTPConnection",
+    "WebSocketConnection",
+    "ConnectionPool",
+    "HeartbeatMonitor",
+    "get_connection_manager",
+    "get_heartbeat_monitor",
+    "shutdown_connection_managers",
 ]
