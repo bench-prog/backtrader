@@ -2,17 +2,24 @@
 
 <cite>
 **本文档引用的文件**
-- [real_trade/binance/broker.py](file://real_trade/binance/broker.py)
-- [real_trade/common/base_broker.py](file://real_trade/common/base_broker.py)
-- [real_trade/binance/store.py](file://real_trade/binance/store.py)
-- [real_trade/common/base_store.py](file://real_trade/common/base_store.py)
+- [real_trade/brokers/binancebroker.py](file://real_trade/brokers/binancebroker.py)
+- [real_trade/brokers/basebroker.py](file://real_trade/brokers/basebroker.py)
+- [real_trade/stores/binancestore.py](file://real_trade/stores/binancestore.py)
+- [real_trade/stores/basestore.py](file://real_trade/stores/basestore.py)
 - [backtrader/broker.py](file://backtrader/broker.py)
 - [backtrader/order.py](file://backtrader/order.py)
-- [real_trade/binance/tests/test_market_order.py](file://real_trade/binance/tests/test_market_order.py)
-- [real_trade/binance/tests/test_stop_loss.py](file://real_trade/binance/tests/test_stop_loss.py)
-- [real_trade/binance/examples/verify_order_submission.py](file://real_trade/binance/examples/verify_order_submission.py)
-- [real_trade/binance/config/default.json](file://real_trade/binance/config/default.json)
+- [real_trade/tests/test_market_order.py](file://real_trade/tests/test_market_order.py)
+- [real_trade/tests/test_stop_loss.py](file://real_trade/tests/test_stop_loss.py)
+- [real_trade/examples/quickstart.py](file://real_trade/examples/quickstart.py)
+- [real_trade/__init__.py](file://real_trade/__init__.py)
 </cite>
+
+## 更新摘要
+**所做更改**
+- 更新模块结构：BinanceBroker 现位于 real_trade/brokers/ 目录下
+- 更新导入路径：from real_trade.brokers import BinanceBroker
+- 更新示例和测试文件位置
+- 更新架构图和代码示例以反映新的模块组织
 
 ## 目录
 1. [简介](#简介)
@@ -29,11 +36,13 @@
 
 BinanceBroker是Backtrader框架中针对Binance交易所的专用执行层实现。该组件基于通用的BaseBroker基类，通过继承机制实现了Binance特定的订单处理逻辑，为量化交易策略提供了完整的订单执行和交易管理功能。
 
+**更新** 模块结构已重构，BinanceBroker现在位于real_trade/brokers/目录下，导入路径更新为from real_trade.brokers import BinanceBroker。
+
 本执行层支持模拟交易和真实交易两种模式，集成了Binance Futures和Spot市场的交易能力，提供了从订单提交到成交的完整生命周期管理。通过与CCXT库的深度集成，BinanceBroker能够处理各种复杂的订单类型，包括市价单、限价单、止损单、止盈单等，并提供了完善的资金管理和风险控制机制。
 
 ## 项目结构
 
-BinanceBroker执行层位于real_trade/binance目录下，采用模块化设计，主要包含以下核心文件：
+BinanceBroker执行层位于real_trade/brokers目录下，采用模块化设计，主要包含以下核心文件：
 
 ```mermaid
 graph TB
@@ -49,23 +58,21 @@ end
 subgraph "测试文件"
 TMO[市价单测试]
 TSL[止损单测试]
-VOS[订单验证测试]
 end
 subgraph "示例文件"
-EOS[订单提交验证]
-CEX[配置示例]
-DPO[持仓调试]
+QS[快速开始示例]
+LT[实盘交易示例]
 end
 end
 ```
 
 **图表来源**
-- [real_trade/binance/broker.py](file://real_trade/binance/broker.py#L18-L43)
-- [real_trade/binance/store.py](file://real_trade/binance/store.py#L18-L125)
+- [real_trade/brokers/binancebroker.py](file://real_trade/brokers/binancebroker.py#L14-L17)
+- [real_trade/stores/binancestore.py](file://real_trade/stores/binancestore.py#L17-L96)
 
 **章节来源**
-- [real_trade/binance/broker.py](file://real_trade/binance/broker.py#L1-L43)
-- [real_trade/binance/store.py](file://real_trade/binance/store.py#L1-L125)
+- [real_trade/brokers/binancebroker.py](file://real_trade/brokers/binancebroker.py#L1-L18)
+- [real_trade/stores/binancestore.py](file://real_trade/stores/binancestore.py#L1-L96)
 
 ## 核心组件
 
@@ -79,6 +86,8 @@ BinanceBroker是整个执行层的核心类，完全继承自BaseBroker基类，
 - 集成Binance特定的账户信息获取
 - 提供订单生命周期管理
 
+**更新** BinanceBroker现在位于real_trade/brokers/binancebroker.py，通过相对导入从. basebroker继承。
+
 ### BinanceStore类
 
 BinanceStore负责与Binance交易所的连接管理，继承自BaseStore基类，实现了交易所特定的配置和连接逻辑。
@@ -90,8 +99,8 @@ BinanceStore负责与Binance交易所的连接管理，继承自BaseStore基类�
 - 市场类型（Spot/Future/Delivery）的支持
 
 **章节来源**
-- [real_trade/binance/broker.py](file://real_trade/binance/broker.py#L18-L43)
-- [real_trade/binance/store.py](file://real_trade/binance/store.py#L18-L125)
+- [real_trade/brokers/binancebroker.py](file://real_trade/brokers/binancebroker.py#L14-L17)
+- [real_trade/stores/binancestore.py](file://real_trade/stores/binancestore.py#L17-L96)
 
 ## 架构概览
 
@@ -129,8 +138,8 @@ BB --> FM
 ```
 
 **图表来源**
-- [real_trade/common/base_broker.py](file://real_trade/common/base_broker.py#L16-L55)
-- [real_trade/common/base_store.py](file://real_trade/common/base_store.py#L17-L100)
+- [real_trade/brokers/basebroker.py](file://real_trade/brokers/basebroker.py#L17-L61)
+- [real_trade/stores/basestore.py](file://real_trade/stores/basestore.py#L17-L98)
 
 该架构实现了以下优势：
 - **解耦性**：各层之间职责明确，便于维护和扩展
@@ -187,8 +196,8 @@ BaseBroker <|-- BinanceBroker
 
 **图表来源**
 - [backtrader/broker.py](file://backtrader/broker.py#L49-L169)
-- [real_trade/common/base_broker.py](file://real_trade/common/base_broker.py#L16-L439)
-- [real_trade/binance/broker.py](file://real_trade/binance/broker.py#L18-L43)
+- [real_trade/brokers/basebroker.py](file://real_trade/brokers/basebroker.py#L17-L445)
+- [real_trade/brokers/binancebroker.py](file://real_trade/brokers/binancebroker.py#L14-L17)
 
 #### 订单提交流程
 
@@ -220,7 +229,7 @@ end
 ```
 
 **图表来源**
-- [real_trade/common/base_broker.py](file://real_trade/common/base_broker.py#L182-L256)
+- [real_trade/brokers/basebroker.py](file://real_trade/brokers/basebroker.py#L188-L205)
 
 #### 订单生命周期管理
 
@@ -242,7 +251,7 @@ Rejected --> [*]
 ```
 
 **图表来源**
-- [real_trade/common/base_broker.py](file://real_trade/common/base_broker.py#L335-L361)
+- [real_trade/brokers/basebroker.py](file://real_trade/brokers/basebroker.py#L380-L390)
 
 ### 订单类型支持
 
@@ -285,7 +294,7 @@ Backtrader框架支持多种订单类型，BinanceBroker通过BaseBroker实现�
 - 支持多种执行类型
 
 **章节来源**
-- [real_trade/common/base_broker.py](file://real_trade/common/base_broker.py#L110-L181)
+- [real_trade/brokers/basebroker.py](file://real_trade/brokers/basebroker.py#L116-L186)
 - [backtrader/order.py](file://backtrader/order.py#L620-L641)
 
 ### 资金管理功能
@@ -310,7 +319,7 @@ Notify --> End
 ```
 
 **图表来源**
-- [real_trade/common/base_broker.py](file://real_trade/common/base_broker.py#L269-L326)
+- [real_trade/brokers/basebroker.py](file://real_trade/brokers/basebroker.py#L263-L340)
 
 #### 维持保证金
 
@@ -354,7 +363,7 @@ BaseBroker提供了默认的佣金配置：
 - leverage：杠杆倍数
 
 **章节来源**
-- [real_trade/common/base_broker.py](file://real_trade/common/base_broker.py#L385-L435)
+- [real_trade/brokers/basebroker.py](file://real_trade/brokers/basebroker.py#L413-L441)
 
 ### Paper Trading模式
 
@@ -380,7 +389,7 @@ PS->>STR : notify(order)
 ```
 
 **图表来源**
-- [real_trade/common/base_broker.py](file://real_trade/common/base_broker.py#L201-L228)
+- [real_trade/brokers/basebroker.py](file://real_trade/brokers/basebroker.py#L207-L234)
 
 #### 模拟资金管理
 
@@ -396,12 +405,56 @@ Paper Trading模式使用独立的资金池进行模拟交易：
 
 以下是一个完整的交易示例，展示了如何在策略中使用BinanceBroker：
 
+#### 快速开始示例
+
+**更新** 示例代码现在使用新的导入路径from real_trade.brokers import BinanceBroker
+
+```python
+#!/usr/bin/env python
+# -*- coding: utf-8; py-indent-offset:4 -*-
+
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
+
+import backtrader as bt
+from real_trade.strategies.trend import MACrossStrategy
+
+def main():
+    # 方式二：手动组装
+    from real_trade.brokers import BinanceBroker
+    from real_trade.feeds import BinanceData
+    from real_trade.stores import BinanceStore
+
+    store = BinanceStore.get_instance(testnet=False)  # 回测不需要 testnet
+    broker = BinanceBroker(store, paper_trading=True, cash=10000.0)
+    data = BinanceData.from_timeframe_string(
+        "1h",
+        store,
+        symbol="BTC/USDT",
+        backtest=True,
+        historical_limit=500,
+    )
+
+    cerebro = bt.Cerebro()
+    cerebro.setbroker(broker)
+    cerebro.adddata(data)
+    cerebro.addstrategy(MACrossStrategy, fast_period=10, slow_period=30)
+    cerebro.run()
+
+if __name__ == "__main__":
+    main()
+```
+
 #### 市价单交易示例
 
 ```python
 # 市价单测试示例
 def test_market_order():
     # 连接Binance Futures Demo Trading
+    from real_trade.stores import BinanceStore
+    
     store = BinanceStore.get_instance(
         apikey=API_KEY,
         secret=API_SECRET,
@@ -446,8 +499,9 @@ def test_stop_loss():
 ```
 
 **章节来源**
-- [real_trade/binance/tests/test_market_order.py](file://real_trade/binance/tests/test_market_order.py#L19-L153)
-- [real_trade/binance/tests/test_stop_loss.py](file://real_trade/binance/tests/test_stop_loss.py#L91-L129)
+- [real_trade/examples/quickstart.py](file://real_trade/examples/quickstart.py#L38-L56)
+- [real_trade/tests/test_market_order.py](file://real_trade/tests/test_market_order.py#L19-L154)
+- [real_trade/tests/test_stop_loss.py](file://real_trade/tests/test_stop_loss.py#L20-L206)
 
 ## 依赖关系分析
 
@@ -477,8 +531,8 @@ end
 ```
 
 **图表来源**
-- [real_trade/binance/broker.py](file://real_trade/binance/broker.py#L14-L15)
-- [real_trade/binance/store.py](file://real_trade/binance/store.py#L61-L86)
+- [real_trade/brokers/binancebroker.py](file://real_trade/brokers/binancebroker.py#L11)
+- [real_trade/stores/binancestore.py](file://real_trade/stores/binancestore.py#L65-L83)
 
 ### 关键依赖关系
 
@@ -503,7 +557,7 @@ BinanceBroker通过CCXT库实现与Binance交易所的直接通信：
 - 灵活的交易参数配置
 
 **章节来源**
-- [real_trade/binance/store.py](file://real_trade/binance/store.py#L61-L86)
+- [real_trade/stores/binancestore.py](file://real_trade/stores/binancestore.py#L65-L83)
 - [backtrader/broker.py](file://backtrader/broker.py#L49-L169)
 
 ## 性能考虑
@@ -581,7 +635,8 @@ BinanceBroker在设计时充分考虑了性能优化，特别是在高频交易�
 4. 确认滑点处理设置
 
 **章节来源**
-- [real_trade/binance/examples/verify_order_submission.py](file://real_trade/binance/examples/verify_order_submission.py#L18-L216)
+- [real_trade/tests/test_market_order.py](file://real_trade/tests/test_market_order.py#L145-L149)
+- [real_trade/tests/test_stop_loss.py](file://real_trade/tests/test_stop_loss.py#L197-L201)
 
 ### 配置验证
 
@@ -619,6 +674,8 @@ BinanceBroker执行层通过精心设计的架构和实现，为Backtrader框架
 
 **测试覆盖全面：** 提供了完整的测试套件和示例代码，便于开发和部署。
 
+**模块结构清晰：** 新的模块组织使代码结构更加清晰，便于维护和扩展。
+
 ### 应用价值
 
 **降低开发门槛：** 通过简化的API设计，降低了量化交易的开发难度。
@@ -628,5 +685,7 @@ BinanceBroker执行层通过精心设计的架构和实现，为Backtrader框架
 **增强系统稳定性：** 通过严格的错误处理和异常恢复机制，确保了系统的稳定运行。
 
 **促进生态发展：** 为量化交易社区提供了高质量的基础设施，推动了整个行业的发展。
+
+**更新** 新的模块结构（real_trade/brokers/）使BinanceBroker的导入和使用更加直观，符合Python包的标准组织方式。
 
 BinanceBroker执行层不仅是一个功能强大的交易执行组件，更是Backtrader框架生态系统中的重要基石，为构建专业的量化交易系统奠定了坚实的技术基础。
