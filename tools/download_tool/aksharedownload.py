@@ -43,11 +43,13 @@ class AkShareDownload(object):
 
         Args:
             symbol: Stock code (e.g., '000001' for 平安银行, 'sh000001' for 上证指数)
+                    For foreign futures: 'GC' (COMEX Gold), 'SI' (Silver), 'CL' (Crude Oil), etc.
             fromdate: Start date
             todate: End date
             period: Data frequency - 'daily', 'weekly', 'monthly'
             adjust: Price adjustment - 'qfq' (前复权), 'hfq' (后复权), '' (不复权)
-            market: Market type - 'stock' (A股), 'index' (指数), 'fund' (基金), 'futures' (期货)
+            market: Market type - 'stock' (A股), 'index' (指数), 'fund' (基金),
+                    'futures' (国内期货), 'foreign_futures' (国际期货)
         """
         try:
             import akshare as ak
@@ -107,8 +109,13 @@ class AkShareDownload(object):
                 df = ak.fund_open_fund_info_em(symbol=symbol, indicator="单位净值走势")
 
             elif market == 'futures':
-                # 期货数据
+                # 国内期货数据
                 df = ak.futures_zh_daily_sina(symbol=symbol)
+
+            elif market == 'foreign_futures':
+                # 国际期货数据 (COMEX, NYMEX, etc.)
+                logging.info(f"Downloading foreign futures {symbol}")
+                df = ak.futures_foreign_hist(symbol=symbol)
 
             else:
                 self.error = f'Unsupported market type: {market}'
@@ -190,11 +197,11 @@ def parse_args():
         description='Download Chinese Market Data using AkShare')
 
     parser.add_argument('--symbol', required=True,
-                        help='Stock code (e.g., 000001 for 平安银行, sh000001 for 上证指数)')
+                        help='Stock code (e.g., 000001 for 平安银行, sh000001 for 上证指数) or Foreign futures symbol (e.g., GC for COMEX Gold, SI for Silver, CL for Crude Oil)')
 
     parser.add_argument('--market', default='stock',
-                        choices=['stock', 'index', 'fund', 'futures'],
-                        help='Market type: stock (A股), index (指数), fund (基金), futures (期货)')
+                        choices=['stock', 'index', 'fund', 'futures', 'foreign_futures'],
+                        help='Market type: stock (A股), index (指数), fund (基金), futures (国内期货), foreign_futures (国际期货如COMEX黄金)')
 
     parser.add_argument('--period', default='daily',
                         choices=['daily', 'weekly', 'monthly'],
