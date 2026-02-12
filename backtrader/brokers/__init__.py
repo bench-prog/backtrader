@@ -18,12 +18,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ###############################################################################
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 # The modules below should/must define __all__ with the objects wishes
 # or prepend an "_" (underscore) to private classes/variables
-
 from .bbroker import BackBroker, BrokerBack
 
 try:
@@ -38,5 +36,10 @@ except ImportError:
 
 try:
     from .oandabroker import OandaBroker
-except ImportError as e:
+except ImportError:
     pass  # The user may not have something installed
+
+try:
+    from .binance import BinanceBroker
+except ImportError:
+    pass  # The user may not have ccxt installed
