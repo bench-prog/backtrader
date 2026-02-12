@@ -19,6 +19,26 @@ from .connection_manager import (
     get_heartbeat_monitor,
     shutdown_connection_managers,
 )
+from .data_monitor import (
+    DataManager,
+    DataStreamMonitor,
+    QualityMetrics,
+    QualityThreshold,
+    create_data_monitor,
+    get_data_manager,
+    shutdown_data_monitors,
+)
+from .data_quality import (
+    DataConsistencyChecker,
+    DataQualityAssessor,
+    DataQualityLevel,
+    DataQualityReport,
+    DataValidationRule,
+    DataValidator,
+    OutlierDetector,
+    assess_ohlcv_quality,
+    validate_single_bar,
+)
 from .exceptions import (
     BusinessError,
     ConfigError,
@@ -84,4 +104,22 @@ __all__ = [
     "get_connection_manager",
     "get_heartbeat_monitor",
     "shutdown_connection_managers",
+    # Data Quality
+    "DataQualityLevel",
+    "DataQualityReport",
+    "DataValidationRule",
+    "DataValidator",
+    "DataConsistencyChecker",
+    "OutlierDetector",
+    "DataQualityAssessor",
+    "assess_ohlcv_quality",
+    "validate_single_bar",
+    # Data Monitoring
+    "QualityMetrics",
+    "QualityThreshold",
+    "DataStreamMonitor",
+    "DataManager",
+    "get_data_manager",
+    "create_data_monitor",
+    "shutdown_data_monitors",
 ]

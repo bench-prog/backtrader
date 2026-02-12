@@ -7,24 +7,115 @@ Exception Usage Examples - 异常处理使用示例
 """
 
 import asyncio
+import os
+import sys
 import time
 from typing import Dict
 
-from ..utils import (
-    BusinessError,
-    ConfigError,
-    ConnectionError,
-    DataError,
-    ErrorCode,
-    NetworkError,
-    RealTradeError,
-    SystemError,
-    TimeoutError,
-    TradingError,
-    exception_handler,
-    handle_exception,
-    safe_call,
+# 添加项目路径
+project_root = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 )
+sys.path.insert(0, project_root)
+
+try:
+    from real_trade.utils import (
+        BusinessError,
+        ConfigError,
+        ConnectionError,
+        DataError,
+        ErrorCode,
+        NetworkError,
+        RealTradeError,
+        SystemError,
+        TimeoutError,
+        TradingError,
+        exception_handler,
+        handle_exception,
+        safe_call,
+    )
+except ImportError:
+    # 创建模拟异常类和装饰器
+    class RealTradeError(Exception):
+        def __init__(self, message="", details=None):
+            self.message = message
+            self.details = details or {}
+            self.code = getattr(self, "code", "UNKNOWN_ERROR")
+            super().__init__(f"[{self.code}] {message}")
+
+        def to_dict(self):
+            return {"message": self.message, "code": self.code, "details": self.details}
+
+    class SystemError(RealTradeError):
+        def __init__(self, message="", details=None):
+            super().__init__(message, details)
+            self.code = "SYSTEM_ERROR"
+
+    class NetworkError(RealTradeError):
+        def __init__(self, message="", details=None):
+            super().__init__(message, details)
+            self.code = "NETWORK_ERROR"
+
+    class ConnectionError(RealTradeError):
+        def __init__(self, message="", details=None):
+            super().__init__(message, details)
+            self.code = "CONNECTION_ERROR"
+
+    class TimeoutError(RealTradeError):
+        def __init__(self, message="", details=None):
+            super().__init__(message, details)
+            self.code = "TIMEOUT_ERROR"
+
+    class DataError(RealTradeError):
+        def __init__(self, message="", details=None):
+            super().__init__(message, details)
+            self.code = "DATA_ERROR"
+
+    class TradingError(RealTradeError):
+        def __init__(self, message="", details=None):
+            super().__init__(message, details)
+            self.code = "TRADING_ERROR"
+
+    class ConfigError(RealTradeError):
+        def __init__(self, message="", details=None):
+            super().__init__(message, details)
+            self.code = "CONFIG_ERROR"
+
+    class BusinessError(RealTradeError):
+        def __init__(self, message="", details=None):
+            super().__init__(message, details)
+            self.code = "BUSINESS_ERROR"
+
+    class ErrorCode:
+        AUTHENTICATION_FAILED = "AUTHENTICATION_FAILED"
+        ORDER_REJECTED = "ORDER_REJECTED"
+        NETWORK_TIMEOUT = "NETWORK_TIMEOUT"
+        INVALID_CONFIG = "INVALID_CONFIG"
+        DATA_INCONSISTENCY = "DATA_INCONSISTENCY"
+        BUSINESS_RULE_VIOLATION = "BUSINESS_RULE_VIOLATION"
+
+    def exception_handler(default_return=None):
+        def decorator(func):
+            def wrapper(*args, **kwargs):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    print(f"捕获异常: {e}")
+                    return default_return
+
+            return wrapper
+
+        return decorator
+
+    def handle_exception(exception, context=""):
+        return RealTradeError(f"{context}: {str(exception)}")
+
+    def safe_call(func, *args, default=None, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            print(f"安全调用捕获异常: {e}")
+            return default
 
 
 class MockExchangeAPI:

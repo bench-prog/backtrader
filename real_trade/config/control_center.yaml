@@ -1,0 +1,128 @@
+# Control Center Configuration
+# 交易控制中枢配置文件
+
+# 系统基本信息
+system:
+  name: "Backtrader Trading Control Center"
+  version: "1.0.0"
+  environment: "production"  # production, staging, development
+
+# 监控配置
+monitoring:
+  interval: 5  # 监控间隔(秒)
+  health_check_timeout: 30  # 健康检查超时时间(秒)
+  metrics_retention_days: 7  # 指标保留天数
+
+# 告警配置
+alerts:
+  enabled: true
+  thresholds:
+    component_health: 0.8  # 组件健康度阈值
+    cpu_usage: 80  # CPU使用率阈值(%)
+    memory_usage: 85  # 内存使用率阈值(%)
+    disk_usage: 90  # 磁盘使用率阈值(%)
+  
+  channels:
+    - type: "email"
+      enabled: true
+      recipients:
+        - "admin@trading.com"
+        - "risk@trading.com"
+    
+    - type: "slack"
+      enabled: false
+      webhook_url: ""
+    
+    - type: "wechat"
+      enabled: true
+      webhook_url: ""
+
+# 风险控制配置
+risk:
+  limits:
+    # 持仓限制
+    position:
+      max_positions: 10  # 最大持仓数
+      max_single_position_value: 100000  # 单个持仓最大价值
+      max_total_exposure: 500000  # 总暴露金额
+    
+    # 资金限制
+    capital:
+      daily_loss_limit: 0.05  # 日损失限制(5%)
+      max_drawdown: 0.20  # 最大回撤(20%)
+      min_account_balance: 10000  # 最低账户余额
+    
+    # 交易限制
+    trading:
+      max_daily_trades: 50  # 每日最大交易数
+      max_order_size: 50000  # 最大订单规模
+      min_order_size: 100  # 最小订单规模
+
+# 组件配置
+components:
+  binance_feed:
+    enabled: true
+    api_key: "${BINANCE_API_KEY}"
+    api_secret: "${BINANCE_API_SECRET}"
+    symbols: ["BTC/USDT", "ETH/USDT"]
+    timeframe: "1m"
+    rate_limit: 1200  # 每分钟请求限制
+    
+  base_strategy:
+    enabled: true
+    parameters:
+      fast_period: 12
+      slow_period: 26
+      signal_period: 9
+    risk_settings:
+      stop_loss: 0.02  # 2%止损
+      take_profit: 0.04  # 4%止盈
+      position_size: 0.1  # 10%仓位
+    
+  risk_manager:
+    enabled: true
+    dynamic_adjustment: true
+    volatility_window: 20
+    correlation_threshold: 0.7
+
+# 日志配置
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s [%(name)s] %(levelname)s %(message)s"
+  handlers:
+    - type: "file"
+      filename: "logs/control_center.log"
+      max_bytes: 10485760  # 10MB
+      backup_count: 5
+    
+    - type: "console"
+      enabled: true
+
+# 数据库配置
+database:
+  enabled: true
+  type: "sqlite"  # sqlite, postgresql, mysql
+  path: "data/control_center.db"
+  backup_enabled: true
+  backup_interval_hours: 24
+
+# 网络配置
+network:
+  bind_address: "0.0.0.0"
+  port: 8080
+  ssl_enabled: false
+  cors_enabled: true
+
+# 安全配置
+security:
+  authentication_required: true
+  jwt_secret: "${JWT_SECRET}"
+  token_expiry_hours: 24
+  allowed_ips:
+    - "127.0.0.1"
+    - "192.168.1.0/24"
+  
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 60
+    burst_limit: 10

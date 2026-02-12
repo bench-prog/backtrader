@@ -1,0 +1,786 @@
+{
+  "signals": [
+    {
+      "timestamp": 1770832184.051303,
+      "signal_type": "buy",
+      "price": 51797.85908700433,
+      "strength": 1.0,
+      "reason": "\u4ef7\u683c\u7a81\u7834\u5747\u7ebf",
+      "strategy_name": "default"
+    },
+    {
+      "timestamp": 1770832186.0968142,
+      "signal_type": "sell",
+      "price": 50421.650144291816,
+      "strength": 1.0,
+      "reason": "\u4ef7\u683c\u8dcc\u7834\u5747\u7ebf",
+      "strategy_name": "default"
+    }
+  ],
+  "positions": [
+    {
+      "timestamp": 1770832184.051489,
+      "symbol": "BTCUSDT",
+      "direction": "long",
+      "size": 1.7375235499372266,
+      "entry_price": 51797.85908700433,
+      "exit_price": 50421.650144291816,
+      "pnl": -2391.1954475972107,
+      "status": "closed"
+    }
+  ],
+  "metrics": [
+    {
+      "timestamp": 1770832179.972429,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832180.177514,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832180.380123,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832180.585187,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832180.7883918,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832180.992439,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832181.197529,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832181.402993,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832181.6039522,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832181.809098,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832182.013682,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832182.218598,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832182.420201,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832182.6252658,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832182.825423,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832183.03009,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832183.235363,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832183.440303,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832183.642766,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832183.845957,
+      "equity": 100000.0,
+      "cash": 100000.0,
+      "positions_value": 0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832184.052284,
+      "equity": 100000.0,
+      "cash": 10000.0,
+      "positions_value": 90000.0,
+      "total_value": 100000.0,
+      "drawdown": 0.0,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832184.2573068,
+      "equity": 100000.0,
+      "cash": 10000.0,
+      "positions_value": 90221.5199433257,
+      "total_value": 100221.5199433257,
+      "drawdown": -0.00221519943325693,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832184.459771,
+      "equity": 100000.0,
+      "cash": 10000.0,
+      "positions_value": 89003.53266253269,
+      "total_value": 99003.53266253269,
+      "drawdown": 0.012152951596441242,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832184.664772,
+      "equity": 100000.0,
+      "cash": 10000.0,
+      "positions_value": 88591.02445534036,
+      "total_value": 98591.02445534036,
+      "drawdown": 0.016268915986380587,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832184.870395,
+      "equity": 100000.0,
+      "cash": 10000.0,
+      "positions_value": 88546.1413375648,
+      "total_value": 98546.1413375648,
+      "drawdown": 0.01671675511116082,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832185.074238,
+      "equity": 100000.0,
+      "cash": 10000.0,
+      "positions_value": 88177.38469471881,
+      "total_value": 98177.38469471881,
+      "drawdown": 0.02039617089985083,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832185.2791271,
+      "equity": 100000.0,
+      "cash": 10000.0,
+      "positions_value": 88742.37490773878,
+      "total_value": 98742.37490773878,
+      "drawdown": 0.014758756766245003,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832185.4855502,
+      "equity": 100000.0,
+      "cash": 10000.0,
+      "positions_value": 88339.64833314819,
+      "total_value": 98339.64833314819,
+      "drawdown": 0.018777121033902566,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832185.691069,
+      "equity": 100000.0,
+      "cash": 10000.0,
+      "positions_value": 88922.4858811974,
+      "total_value": 98922.4858811974,
+      "drawdown": 0.012961628030216336,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832185.892517,
+      "equity": 100000.0,
+      "cash": 10000.0,
+      "positions_value": 88515.3932198901,
+      "total_value": 98515.3932198901,
+      "drawdown": 0.017023556661287808,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832186.0970721,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832186.302273,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832186.507125,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832186.7120051,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832186.915265,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832187.12042,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832187.3252811,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832187.530344,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832187.731818,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832187.938163,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832188.140367,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832188.345471,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832188.550765,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832188.756906,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832188.962156,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832189.167826,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832189.3682492,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832189.5733619,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832189.778361,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    },
+    {
+      "timestamp": 1770832189.98351,
+      "equity": 97608.80455240278,
+      "cash": 97608.80455240278,
+      "positions_value": 0,
+      "total_value": 97608.80455240278,
+      "drawdown": 0.026069404978096268,
+      "sharpe_ratio": 1.2,
+      "win_rate": 0.65,
+      "profit_factor": 1.8
+    }
+  ],
+  "price_history": [
+    [
+      1770832179.972425,
+      50225.36674341165
+    ],
+    [
+      1770832180.177494,
+      50920.19904012007
+    ],
+    [
+      1770832180.380078,
+      50849.42789691552
+    ],
+    [
+      1770832180.5851789,
+      50722.241437055345
+    ],
+    [
+      1770832180.788384,
+      51114.39932193526
+    ],
+    [
+      1770832180.99243,
+      50737.37605051661
+    ],
+    [
+      1770832181.197508,
+      51492.689226844435
+    ],
+    [
+      1770832181.40293,
+      50515.27867746012
+    ],
+    [
+      1770832181.603882,
+      51442.68185280836
+    ],
+    [
+      1770832181.809067,
+      50841.534294023935
+    ],
+    [
+      1770832182.0135932,
+      51483.78652129451
+    ],
+    [
+      1770832182.218497,
+      51529.28120427706
+    ],
+    [
+      1770832182.4201658,
+      51343.94364855426
+    ],
+    [
+      1770832182.6252532,
+      51296.91072985827
+    ],
+    [
+      1770832182.8254058,
+      51225.326508642385
+    ],
+    [
+      1770832183.030061,
+      50822.831281643026
+    ],
+    [
+      1770832183.235245,
+      50735.6182687164
+    ],
+    [
+      1770832183.440186,
+      50544.474217746356
+    ],
+    [
+      1770832183.6426299,
+      51268.39476961601
+    ],
+    [
+      1770832183.845867,
+      51522.70464115968
+    ],
+    [
+      1770832184.0511968,
+      51797.85908700433
+    ],
+    [
+      1770832184.257206,
+      51925.35085155262
+    ],
+    [
+      1770832184.4597561,
+      51224.36047888284
+    ],
+    [
+      1770832184.664756,
+      50986.948901234166
+    ],
+    [
+      1770832184.869911,
+      50961.117241123895
+    ],
+    [
+      1770832185.074111,
+      50748.8860786402
+    ],
+    [
+      1770832185.279111,
+      51074.05589463514
+    ],
+    [
+      1770832185.485426,
+      50842.273957288075
+    ],
+    [
+      1770832185.6909661,
+      51177.71548155994
+    ],
+    [
+      1770832185.892482,
+      50943.42072260718
+    ],
+    [
+      1770832186.0967832,
+      50421.650144291816
+    ],
+    [
+      1770832186.302207,
+      50463.95011829117
+    ],
+    [
+      1770832186.504836,
+      49810.53766425856
+    ],
+    [
+      1770832186.711879,
+      50288.36248919837
+    ],
+    [
+      1770832186.915231,
+      50116.71136436506
+    ],
+    [
+      1770832187.120372,
+      50439.459964582406
+    ],
+    [
+      1770832187.3252401,
+      50264.52384083823
+    ],
+    [
+      1770832187.530324,
+      50048.35295783078
+    ],
+    [
+      1770832187.731787,
+      50145.27292880753
+    ],
+    [
+      1770832187.9379709,
+      50282.41903422637
+    ],
+    [
+      1770832188.140346,
+      50032.27713325198
+    ],
+    [
+      1770832188.345433,
+      49827.34870786509
+    ],
+    [
+      1770832188.550621,
+      49738.32646513931
+    ],
+    [
+      1770832188.755085,
+      49552.93592327202
+    ],
+    [
+      1770832188.96205,
+      49481.23605594961
+    ],
+    [
+      1770832189.167783,
+      49626.01547717038
+    ],
+    [
+      1770832189.368206,
+      49592.12922698559
+    ],
+    [
+      1770832189.5733278,
+      48688.40426948981
+    ],
+    [
+      1770832189.778324,
+      49224.07073500205
+    ],
+    [
+      1770832189.9833548,
+      49922.5319969906
+    ]
+  ]
+}
