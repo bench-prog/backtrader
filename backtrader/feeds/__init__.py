@@ -47,6 +47,11 @@ try:
 except ImportError:
     pass  # The user may not have something installed
 
+try:
+    from .binance import BinanceData
+except ImportError:
+    pass  # The user may not have ccxt installed
+
 
 from .vchartfile import VChartFile
 
