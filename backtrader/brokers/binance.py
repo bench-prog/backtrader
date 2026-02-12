@@ -327,6 +327,10 @@ class BinanceBroker(with_metaclass(MetaBinanceBroker, BrokerBase)):
                     order = self.orderbyid[oid]
                     self.notify(order)
 
+    def setcash(self, cash):
+        """设置现金"""
+        self.startingcash = self.cash = cash
+
     # 佣金信息设置
     def setcommission(
         self,
