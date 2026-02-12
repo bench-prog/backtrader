@@ -270,6 +270,6 @@ class BinanceStore(with_metaclass(MetaSingleton, object)):
         return notifs
 
     @classmethod
-    def getdata(cls, *args, **kwargs):
+    def getdata(cls, store, *args, **kwargs):
         """返回DataCls与参数"""
-        return cls.DataCls(*args, **kwargs)
+        return cls.DataCls(store, *args, **kwargs)
