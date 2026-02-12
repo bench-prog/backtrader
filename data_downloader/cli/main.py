@@ -8,11 +8,19 @@ Data Downloader CLI
 
 import argparse
 import logging
+import os
 import sys
 
-from ..providers.akshare import AkShareDownloader
-from ..providers.ccxt import CCXTDownloader
-from ..providers.yahoo import YahooDownloader
+# 添加项目根目录到路径
+project_root = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
+sys.path.insert(0, project_root)
+
+# 使用绝对导入
+from data_downloader.providers.akshare import AkShareDownloader
+from data_downloader.providers.ccxt import CCXTDownloader
+from data_downloader.providers.yahoo import YahooDownloader
 
 
 def setup_logging(level: str = "INFO"):
