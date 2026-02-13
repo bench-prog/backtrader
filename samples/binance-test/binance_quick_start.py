@@ -131,7 +131,7 @@ def run_binance_demo():
     print("💡 建议先使用测试网进行验证\n")
 
     # 添加数据（BTC/USDT）
-    data = bt.stores.BinanceStore.getdata(store=binance_store, dataname='BTCUSDT')
+    data = bt.stores.BinanceStore.getdata(store=binance_store, dataname="BTCUSDT")
     cerebro.adddata(data)
 
     # 添加策略
