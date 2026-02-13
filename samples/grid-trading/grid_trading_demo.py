@@ -9,6 +9,7 @@ Grid Trading Demo for Backtrader
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import datetime
+import os
 
 import backtrader as bt
 
@@ -74,7 +75,11 @@ class GridTradingStrategy(bt.Strategy):
         current_price = self.data.close[0]
 
         # 计算动态网格间距（基于ATR）
-        dynamic_spacing = self.p.grid_spacing * (1 + self.atr[0] / current_price)
+        if len(self.atr) < 1 or self.atr[0] == 0:
+            # 使用默认间距
+            dynamic_spacing = self.p.grid_spacing
+        else:
+            dynamic_spacing = self.p.grid_spacing * (1 + self.atr[0] / current_price)
 
         # 在当前价格上下创建网格
         half_levels = self.p.grid_levels // 2
@@ -276,12 +281,62 @@ def run_grid_trading_demo():
     # 创建Cerebro引擎
     cerebro = bt.Cerebro()
 
-    # 添加数据（使用ORCL一年数据）
-    data = bt.feeds.YahooFinanceData(
-        dataname="ORCL",
-        fromdate=datetime.datetime(2000, 1, 1),
-        todate=datetime.datetime(2000, 12, 31),
-    )
+    # 使用本地BTC数据避免网络问题
+    try:
+        # 尝试使用BTC数据
+        data_file = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+            "datas",
+            "binance-btc-2015-2026.txt",
+        )
+
+        if os.path.exists(data_file):
+            print("使用本地BTC数据...")
+            data = bt.feeds.GenericCSVData(
+                dataname=data_file,
+                fromdate=datetime.datetime(2023, 1, 1),
+                todate=datetime.datetime(2023, 12, 31),
+                dtformat="%Y-%m-%d",
+                datetime=0,
+                open=1,
+                high=2,
+                low=3,
+                close=4,
+                volume=5,
+                openinterest=-1,
+            )
+        else:
+            # 如果BTC数据不存在，使用ORCL数据
+            print("BTC数据不存在，使用ORCL数据...")
+            data = bt.feeds.YahooFinanceData(
+                dataname="ORCL",
+                fromdate=datetime.datetime(2000, 1, 1),
+                todate=datetime.datetime(2000, 12, 31),
+                reverse=False,
+            )
+    except Exception as e:
+        print(f"数据加载失败: {e}")
+        print("使用模拟数据...")
+        # 创建模拟数据
+        import numpy as np
+        import pandas as pd
+
+        dates = pd.date_range("2023-01-01", periods=252, freq="D")
+        prices = 100 + np.cumsum(np.random.normal(0, 0.5, 252))
+
+        df = pd.DataFrame(
+            {
+                "Open": prices * (1 + np.random.normal(0, 0.01, 252)),
+                "High": prices * (1 + abs(np.random.normal(0, 0.02, 252))),
+                "Low": prices * (1 - abs(np.random.normal(0, 0.02, 252))),
+                "Close": prices,
+                "Volume": np.random.randint(1000, 10000, 252),
+            },
+            index=dates,
+        )
+
+        data = bt.feeds.PandasData(dataname=df)
+
     cerebro.adddata(data)
 
     # 添加策略
