@@ -20,7 +20,7 @@
 | **分析器功能** |
 | `real_trade/analyzers/dynamic_risk_analyzer.py` | `backtrader/analyzers/risk_analyzer.py` | ✅ 已替代 | 功能更完善的替代实现 |
 | `real_trade/analyzers/market_state_analyzer.py` | `backtrader/analyzers/risk_analyzer.py` | ✅ 已整合 | 市场状态分析已整合 |
-| `real_trade/analyzers/portfolio_optimizer.py` | 待评估 | ⚠️ 部分缺失 | 投资组合优化功能需要补充 |
+| `real_trade/analyzers/portfolio_optimizer.py` | `backtrader/analyzers/portfolio_optimizer.py` | ✅ 已替代 | 完整的投资组合优化功能实现 |
 
 ## 功能完整性评估
 
@@ -30,12 +30,12 @@
 3. **风险管理**：仓位管理、风险控制、止损机制
 4. **数据分析**：市场状态识别、风险监控、通知机制
 5. **实盘交易**：Cerebro.run_live()方法支持
+6. **投资组合优化**：均值-方差和风险平价优化器
 
 ### ⚠️ 需要进一步评估的功能
-1. **投资组合优化**：real_trade/analyzers/portfolio_optimizer.py的功能
-2. **高级监控功能**：real_trade/monitor/目录下的监控工具
-3. **机器学习组件**：real_trade/ml/目录（目前为空）
-4. **Web界面**：real_trade/web/目录下的web功能
+1. **高级监控功能**：real_trade/monitor/目录下的监控工具
+2. **机器学习组件**：real_trade/ml/目录（目前为空）
+3. **Web界面**：real_trade/web/目录下的web功能
 
 ## 依赖关系分析
 
