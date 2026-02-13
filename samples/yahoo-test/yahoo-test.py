@@ -72,15 +72,15 @@ def parse_args():
         description='Calendar Days Filter Sample')
 
     parser.add_argument('--data', '-d',
-                        default='YHOO',
+                        default='AAPL',
                         help='Ticker to download from Yahoo')
 
     parser.add_argument('--fromdate', '-f',
-                        default='2006-01-01',
+                        default='2020-01-01',
                         help='Starting date in YYYY-MM-DD format')
 
     parser.add_argument('--todate', '-t',
-                        default='2006-12-31',
+                        default='2020-12-31',
                         help='Starting date in YYYY-MM-DD format')
 
     parser.add_argument('--period', default=15, type=int,

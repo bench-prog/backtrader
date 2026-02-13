@@ -26,3 +26,4 @@ from __future__ import (absolute_import, division, print_function,
 
 from .fixedsize import *
 from .percents_sizer import *
+from .risk_sizer import RiskBasedSizer, FixedRiskSizer, create_risk_sizer

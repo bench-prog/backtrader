@@ -68,6 +68,14 @@ Features:
 
 Live Trading and backtesting platform written in Python.
 
+  - **Data Management**
+  
+    - Unified data downloader module supporting multiple sources
+    - Yahoo Finance (global stocks, indices, futures, forex, crypto)
+    - AkShare (Chinese A-shares, indices, funds, futures)  
+    - CCXT (200+ cryptocurrency exchanges)
+    - Custom data source extension framework
+
   - Live Data Feed and Trading with
 
     - Interactive Brokers (needs ``IbPy`` and benefits greatly from an

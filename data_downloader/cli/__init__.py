@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8; py-indent-offset:4 -*-
+"""
+CLI Module Init
+"""
+
+from .main import main
+
+__all__ = ["main"]

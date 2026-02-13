@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Data Downloader Command Line Interface
+
+便捷的命令行入口脚本。
+"""
+
+import sys
+import os
+
+# 添加项目根目录到 Python 路径
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+
+from data_downloader.cli.main import main
+
+if __name__ == '__main__':
+    sys.exit(main())

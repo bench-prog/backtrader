@@ -18,20 +18,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ###############################################################################
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
-
-from .csvgeneric import *
 from .btcsv import *
-from .vchartcsv import *
-from .vchart import *
-from .yahoo import *
-from .quandl import *
-from .sierrachart import *
+from .csvgeneric import *
+from .influxfeed import *
 from .mt4csv import *
 from .pandafeed import *
-from .influxfeed import *
+from .quandl import *
+from .sierrachart import *
+from .vchart import *
+from .vchartcsv import *
+from .yahoo import *
+
 try:
     from .ibdata import *
 except ImportError:
@@ -47,8 +46,12 @@ try:
 except ImportError:
     pass  # The user may not have something installed
 
+try:
+    from .binance import BinanceData
+except ImportError:
+    pass  # The user may not have ccxt installed
 
-from .vchartfile import VChartFile
 
-from .rollover import RollOver
 from .chainer import Chainer
+from .rollover import RollOver
+from .vchartfile import VChartFile
