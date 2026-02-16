@@ -83,6 +83,7 @@ from . import stores as stores
 from . import brokers as brokers
 from . import timer as timer
 from . import risk as risk  # Enterprise Risk Management System
+from . import monitoring as monitoring  # Enterprise Monitoring System
 
 from . import talib as talib
 
