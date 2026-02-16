@@ -20,35 +20,34 @@
 ###############################################################################
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-# Load contributed indicators and studies
-import backtrader.indicators.contrib
-import backtrader.studies.contrib
-
 from . import analyzers as analyzers
 from . import broker as broker
 from . import brokers as brokers
 from . import commissions as commissions
 from . import commissions as comms
+
+# Enterprise modules - P0 features
 from . import config as config  # Enterprise Configuration Management System
-from . import storage as storage  # Enterprise Data Storage System
-from . import messaging as messaging  # Enterprise Message Queue System
 from . import errors as errors
 from . import feeds as feeds
 from . import filters as filters
 from . import indicators as ind
 from . import indicators as indicators
+from . import logging as logging  # Enterprise Logging Enhancement
+from . import messaging as messaging  # Enterprise Message Queue System
 from . import monitoring as monitoring  # Enterprise Monitoring System
 from . import observers as obs
 from . import observers as observers
 from . import risk as risk  # Enterprise Risk Management System
+from . import scheduler as scheduler  # Enterprise Task Scheduler
 from . import signals as signals
 from . import sizers as sizers
+from . import storage as storage  # Enterprise Data Storage System
 from . import stores as stores
 from . import strategies as strategies
 from . import strategies as strats
 from . import studies as studies
 from . import talib as talib
-from . import timer as timer
 from . import utils as utils
 from .analyzer import *
 from .broker import *
