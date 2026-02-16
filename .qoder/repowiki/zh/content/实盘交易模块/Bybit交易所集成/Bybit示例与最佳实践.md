@@ -2,19 +2,19 @@
 
 <cite>
 **本文档引用的文件**
-- [basic_trading.py](file://real_trade/bybit/examples/basic_trading.py)
-- [broker.py](file://real_trade/bybit/broker.py)
-- [store.py](file://real_trade/bybit/store.py)
-- [datafeed.py](file://real_trade/bybit/datafeed.py)
-- [config.py](file://real_trade/bybit/utils/config.py)
-- [logger.py](file://real_trade/bybit/utils/logger.py)
-- [validators.py](file://real_trade/bybit/utils/validators.py)
-- [base.py](file://real_trade/bybit/strategies/base.py)
-- [__init__.py](file://real_trade/bybit/__init__.py)
-- [test_imports.py](file://real_trade/bybit/tests/test_imports.py)
-- [bybit-live-trading.py](file://samples/ccxt-bybit/bybit-live-trading.py)
-- [README.md](file://samples/ccxt-bybit/README.md)
-- [SUMMARY.md](file://samples/ccxt-bybit/SUMMARY.md)
+- [live_trading.py](file://real_trade/examples/live_trading.py)
+- [quickstart.py](file://real_trade/examples/quickstart.py)
+- [full_framework_demo.py](file://real_trade/examples/full_framework_demo.py)
+- [runner.py](file://real_trade/engine/runner.py)
+- [basebroker.py](file://real_trade/brokers/basebroker.py)
+- [basestore.py](file://real_trade/stores/basestore.py)
+- [binancedata.py](file://real_trade/feeds/binancedata.py)
+- [ma_cross.py](file://real_trade/strategies/trend/ma_cross.py)
+- [base.py](file://real_trade/strategies/base.py)
+- [binancestore.py](file://real_trade/stores/binancestore.py)
+- [binancebroker.py](file://real_trade/brokers/binancebroker.py)
+- [helpers.py](file://data_downloader/utils/helpers.py)
+- [ccxt.py](file://data_downloader/providers/ccxt.py)
 </cite>
 
 ## 目录
@@ -32,64 +32,105 @@
 
 ## 简介
 
-Bybit示例与最佳实践文档提供了完整的Backtrader与Bybit交易所集成的使用指南。该文档涵盖了从基础配置到复杂策略实现的全过程，包括环境准备、配置设置、策略编写、实盘运行等各个环节。
+Bybit示例与最佳实践文档提供了完整的Backtrader与加密货币交易所集成的使用指南。该文档涵盖了从基础配置到复杂策略实现的全过程，包括环境准备、配置设置、策略编写、实盘运行等各个环节。
 
-本文档重点介绍了两个核心实现方案：
-- **官方Bybit模块**：基于real_trade/bybit模块的专业实现
-- **CCXT示例**：基于CCXT库的Bybit交易示例
+**重要更新**：由于samples/ccxt-bybit目录下的Bybit示例文件已被删除，本版本文档已完全更新为基于real_trade框架的新实现方案。新方案提供了更完善的模块化架构和更丰富的功能支持。
 
-两个方案都提供了完整的模拟交易和实盘交易支持，以及丰富的风险管理功能。
+本文档重点介绍了基于real_trade框架的专业实现方案，该方案具有以下特点：
+- 完整的模块化架构设计
+- 支持模拟交易和实盘交易
+- 丰富的风险管理功能
+- 统一的配置管理系统
+- 完善的监控和通知机制
 
 ## 项目结构
 
-Bybit集成模块采用清晰的分层架构设计，主要包含以下核心组件：
+real_trade框架采用高度模块化的分层架构设计，主要包含以下核心组件：
 
 ```mermaid
 graph TB
-subgraph "Bybit集成模块"
-A[__init__.py] --> B[store.py]
-A --> C[broker.py]
-A --> D[datafeed.py]
-subgraph "工具模块"
-E[config.py]
-F[logger.py]
-G[validators.py]
+subgraph "real_trade框架"
+A[examples/] --> B[live_trading.py]
+A --> C[quickstart.py]
+A --> D[full_framework_demo.py]
+subgraph "核心引擎"
+E[engine/]
+F[runner.py]
+G[lifecycle.py]
+H[scheduler.py]
+end
+subgraph "交易组件"
+I[brokers/]
+J[basebroker.py]
+K[binancebroker.py]
+L[stores/]
+M[basestore.py]
+N[binancestore.py]
+O[feeds/]
+P[binancedata.py]
 end
 subgraph "策略模块"
-H[base.py]
+Q[strategies/]
+R[base.py]
+S[trend/]
+T[ma_cross.py]
 end
-subgraph "示例模块"
-I[basic_trading.py]
+subgraph "风险管理"
+U[risk/]
+V[analyzers/]
+W[monitor/]
+X[notifications/]
 end
-A --> E
-A --> F
-A --> G
-A --> H
-A --> I
 end
-subgraph "CCXT示例"
-J[bybit-live-trading.py]
-K[README.md]
-L[SUMMARY.md]
-end
-M[tests/test_imports.py] --> A
 ```
 
 **图表来源**
-- [__init__.py](file://real_trade/bybit/__init__.py#L1-L215)
-- [store.py](file://real_trade/bybit/store.py#L1-L262)
-- [broker.py](file://real_trade/bybit/broker.py#L1-L381)
-- [datafeed.py](file://real_trade/bybit/datafeed.py#L1-L235)
+- [runner.py](file://real_trade/engine/runner.py#L105-L183)
+- [basebroker.py](file://real_trade/brokers/basebroker.py#L17-L445)
+- [basestore.py](file://real_trade/stores/basestore.py#L17-L191)
+- [binancedata.py](file://real_trade/feeds/binancedata.py#L14-L18)
 
 **章节来源**
-- [__init__.py](file://real_trade/bybit/__init__.py#L1-L215)
-- [test_imports.py](file://real_trade/bybit/tests/test_imports.py#L1-L139)
+- [live_trading.py](file://real_trade/examples/live_trading.py#L1-L59)
+- [quickstart.py](file://real_trade/examples/quickstart.py#L1-L61)
+- [full_framework_demo.py](file://real_trade/examples/full_framework_demo.py#L1-L284)
 
 ## 核心组件
 
-### BybitStore - 交易所连接管理器
+### TradingRunner - 统一运行器
 
-BybitStore是整个系统的基础设施组件，负责管理CCXT交易所连接和提供统一的API接口。
+TradingRunner是real_trade框架的核心组件，负责封装整个交易流程的初始化和执行。
+
+**核心功能**：
+- 统一的交易所工厂注册机制
+- 自动化的组件装配流程
+- 支持多种运行模式（回测、模拟、实盘）
+- 简化的API接口设计
+
+**关键特性**：
+- 支持Binance等主流交易所
+- 内置参数验证和错误处理
+- 灵活的配置选项
+- 完整的生命周期管理
+
+### BaseBroker - 通用Broker基类
+
+BaseBroker提供了模拟交易和实盘交易的通用实现，是所有具体Broker实现的基础。
+
+**核心功能**：
+- 模拟交易模式（Paper Trading）：完全在本地模拟订单执行
+- 实盘交易模式（Live Trading）：直接与交易所交互
+- 统一的订单生命周期管理
+- 完整的资金和持仓管理
+
+**模拟交易优势**：
+- 使用实时市场数据但不产生真实交易
+- 可以测试策略在真实市场中的表现
+- 适合策略开发和优化阶段
+
+### BaseStore - 通用Store基类
+
+BaseStore是所有交易所连接管理器的基类，提供统一的接口和功能。
 
 **核心功能**：
 - 单例模式管理连接，避免重复初始化
@@ -98,52 +139,22 @@ BybitStore是整个系统的基础设施组件，负责管理CCXT交易所连接
 - 线程安全的连接池管理
 
 **关键特性**：
-- 支持多种市场类型（现货、线性永续、反向合约）
+- 支持多种市场类型（现货、合约等）
 - 可配置代理支持
 - 自动连接测试和状态管理
 
-### BybitBroker - 交易经纪商
-
-BybitBroker实现了完整的订单生命周期管理，支持模拟交易和实盘交易两种模式。
-
-**核心功能**：
-- 模拟交易模式（Paper Trading）：完全在本地模拟订单执行
-- 实盘交易模式（Live Trading）：直接与Bybit交易所交互
-- 支持多种订单类型（市价、限价、止损）
-- 完整的持仓和资金管理
-
-**模拟交易优势**：
-- 使用实时市场数据但不产生真实交易
-- 可以测试策略在真实市场中的表现
-- 适合策略开发和优化阶段
-
-### BybitData - 数据源
-
-BybitData提供了灵活的数据获取能力，支持历史数据回测和实时数据流。
-
-**核心功能**：
-- 历史数据批量下载和缓存
-- 实时数据流推送
-- 多时间周期支持
-- 自动时间戳转换
-
-**数据获取优化**：
-- 分批获取历史数据，避免超时
-- 实时数据按需获取
-- 内存友好的数据管理
-
 **章节来源**
-- [store.py](file://real_trade/bybit/store.py#L16-L262)
-- [broker.py](file://real_trade/bybit/broker.py#L18-L381)
-- [datafeed.py](file://real_trade/bybit/datafeed.py#L19-L235)
+- [runner.py](file://real_trade/engine/runner.py#L105-L183)
+- [basebroker.py](file://real_trade/brokers/basebroker.py#L17-L445)
+- [basestore.py](file://real_trade/stores/basestore.py#L17-L191)
 
 ## 架构概览
 
 ```mermaid
 graph TB
 subgraph "用户策略层"
-A[SimpleMAStrategy]
-B[BybitStrategyBase]
+A[MACrossStrategy]
+B[RealTradeStrategyBase]
 C[自定义策略]
 end
 subgraph "Backtrader核心"
@@ -151,192 +162,211 @@ D[Cerebro引擎]
 E[数据流管理]
 F[订单管理]
 end
-subgraph "Bybit集成层"
-G[BybitStore]
-H[BybitBroker]
-I[BybitData]
+subgraph "real_trade集成层"
+G[TradingRunner]
+H[BaseBroker]
+I[BaseStore]
+J[BinanceData]
 end
-subgraph "CCXT底层"
-J[Bybit交易所API]
-K[WebSocket实时流]
-L[RESTful历史数据]
+subgraph "交易所底层"
+K[CCXT库]
+L[WebSocket实时流]
+M[RESTful历史数据]
 end
 A --> D
 B --> D
 C --> D
 D --> E
 D --> F
-E --> I
+E --> J
 F --> H
-H --> G
-G --> J
+H --> I
 I --> K
-I --> L
+J --> L
+J --> M
 ```
 
 **图表来源**
-- [basic_trading.py](file://real_trade/bybit/examples/basic_trading.py#L19-L39)
-- [broker.py](file://real_trade/bybit/broker.py#L18-L59)
-- [datafeed.py](file://real_trade/bybit/datafeed.py#L19-L88)
+- [ma_cross.py](file://real_trade/strategies/trend/ma_cross.py#L15-L51)
+- [base.py](file://real_trade/strategies/base.py#L19-L159)
+- [runner.py](file://real_trade/engine/runner.py#L105-L183)
 
 ## 详细组件分析
 
-### 基础交易示例分析
+### 实盘交易示例分析
 
-#### SimpleMAStrategy策略实现
+#### live_trading.py完整实现
 
-SimpleMAStrategy是一个经典的移动平均线交叉策略，展示了如何在Bybit环境中实现基本的交易逻辑。
+live_trading.py展示了real_trade框架的完整实盘交易流程，包括引擎、风控、监控和通知的完整集成。
 
 ```mermaid
 classDiagram
-class SimpleMAStrategy {
-+params : tuple
+class TradingRunner {
++exchange_name : str
++strategy_cls : Strategy
++strategy_params : dict
++store : BaseStore
++broker : BaseBroker
++cerebro : Cerebro
++build() Cerebro
++run() list
++add_analyzer() TradingRunner
+}
+class MACrossStrategy {
++fast_period : int
++slow_period : int
 +fast_ma : SMA
 +slow_ma : SMA
 +crossover : CrossOver
-+__init__()
 +next()
 }
-class BybitStrategyBase {
-+params : tuple
-+order : Order
-+buyprice : float
-+buycomm : float
-+log(txt, dt, level)
-+notify_order(order)
-+notify_trade(trade)
-+check_stop_loss()
-+check_take_profit()
-+get_position_size(risk_pct)
-+stop()
+class RiskManager {
++max_position_pct : float
++risk_per_trade : float
++max_drawdown_pct : float
++max_daily_trades : int
 }
-class SMA {
-+period : int
-+__init__(period)
+class PerformanceTracker {
++initial_cash : float
++portfolio_history : list
++performance_metrics : dict
 }
-class CrossOver {
-+__init__(data1, data2)
+class LifecycleManager {
++max_retries : int
++retry_delay : int
++on_start() void
++on_stop() void
++on_error() void
 }
-SimpleMAStrategy --|> BybitStrategyBase
-SimpleMAStrategy --> SMA
-SimpleMAStrategy --> SMA
-SimpleMAStrategy --> CrossOver
+TradingRunner --> MACrossStrategy
+TradingRunner --> RiskManager
+LifecycleManager --> TradingRunner
+PerformanceTracker --> TradingRunner
 ```
 
 **图表来源**
-- [basic_trading.py](file://real_trade/bybit/examples/basic_trading.py#L19-L39)
-- [base.py](file://real_trade/bybit/strategies/base.py#L11-L191)
+- [live_trading.py](file://real_trade/examples/live_trading.py#L20-L55)
+- [runner.py](file://real_trade/engine/runner.py#L105-L183)
+- [ma_cross.py](file://real_trade/strategies/trend/ma_cross.py#L15-L51)
 
-**策略执行流程**：
+**完整执行流程**：
 
 ```mermaid
 sequenceDiagram
 participant U as 用户
-participant S as SimpleMAStrategy
-participant B as BybitBroker
-participant ST as BybitStore
-participant EX as Bybit交易所
-U->>S : 初始化策略
-S->>S : 计算移动平均线
-loop 每个数据点
-S->>S : 检查交叉信号
-alt 金叉且无持仓
-S->>B : 提交买入订单
-B->>ST : 检查资金
+participant LR as TradingRunner
+participant BR as BaseBroker
+participant ST as BaseStore
+participant EX as 交易所
+U->>LR : 初始化运行器
+LR->>ST : 创建Store实例
+ST->>EX : 建立连接
+EX-->>ST : 连接成功
+ST-->>LR : 返回Store
+LR->>BR : 创建Broker实例
+LR->>LR : 构建Cerebro引擎
+LR->>U : 返回可运行的交易系统
+U->>LR : 调用run()
+LR->>BR : 提交订单
+BR->>ST : 检查资金/持仓
 ST->>EX : 发送订单请求
 EX-->>ST : 返回订单确认
-ST-->>B : 更新订单状态
-B-->>S : 通知订单执行
-else 死叉且有持仓
-S->>B : 提交卖出订单
-B->>ST : 检查持仓
-ST->>EX : 发送订单请求
-EX-->>ST : 返回订单确认
-ST-->>B : 更新订单状态
-B-->>S : 通知订单执行
-end
-end
+ST-->>BR : 更新订单状态
+BR-->>LR : 通知订单执行
+LR-->>U : 返回交易结果
 ```
 
 **图表来源**
-- [basic_trading.py](file://real_trade/bybit/examples/basic_trading.py#L32-L38)
-- [broker.py](file://real_trade/bybit/broker.py#L133-L157)
+- [live_trading.py](file://real_trade/examples/live_trading.py#L20-L55)
+- [runner.py](file://real_trade/engine/runner.py#L172-L178)
+- [basebroker.py](file://real_trade/brokers/basebroker.py#L235-L262)
 
 **章节来源**
-- [basic_trading.py](file://real_trade/bybit/examples/basic_trading.py#L19-L119)
+- [live_trading.py](file://real_trade/examples/live_trading.py#L1-L59)
 
-### 配置管理系统
+### 快速开始示例分析
 
-配置管理系统提供了灵活的配置加载和管理能力，支持多种配置来源。
+#### quickstart.py简化实现
 
-```mermaid
-flowchart TD
-A[配置加载] --> B{配置来源}
-B --> |环境变量| C[Config.from_env]
-B --> |配置文件| D[load_config_from_file]
-B --> |手动配置| E[直接参数]
-C --> F[解析环境变量]
-D --> G[JSON/Python文件]
-E --> H[字典参数]
-F --> I[Config对象]
-G --> I
-H --> I
-I --> J[参数验证]
-J --> K[配置生效]
-```
+quickstart.py展示了real_trade框架的最简化使用方式，适合初学者快速上手。
 
-**图表来源**
-- [config.py](file://real_trade/bybit/utils/config.py#L67-L81)
-- [config.py](file://real_trade/bybit/utils/config.py#L96-L133)
+**两种使用方式**：
+
+1. **推荐方式（使用TradingRunner）**：
+   - 一行代码启动策略回测
+   - 自动处理所有组件装配
+   - 支持多种配置选项
+
+2. **手动方式**：
+   - 手动创建和配置各个组件
+   - 更高的灵活性和控制力
+   - 适合高级用户定制需求
 
 **章节来源**
-- [config.py](file://real_trade/bybit/utils/config.py#L17-L145)
+- [quickstart.py](file://real_trade/examples/quickstart.py#L1-L61)
 
-### 验证器系统
+### 策略基类分析
 
-验证器系统确保所有输入参数的有效性和安全性。
+#### RealTradeStrategyBase核心功能
 
-**核心验证功能**：
-- 交易对格式验证（BASE/QUOTE格式检查）
-- 时间周期有效性检查
-- API密钥长度和格式验证
-- 订单大小和价格范围验证
+RealTradeStrategyBase为所有实盘策略提供了统一的基础功能。
+
+**核心功能模块**：
+- **日志系统**：统一的日志输出格式和级别控制
+- **订单通知**：完整的订单生命周期通知机制
+- **风控辅助**：内置的止损止盈检查功能
+- **仓位管理**：基于风险的动态仓位计算
+- **交易统计**：自动化的交易统计和分析
+
+**风控功能**：
+- 支持固定百分比止损
+- 支持固定百分比止盈
+- 动态仓位上限控制
+- 风险回报比率计算
 
 **章节来源**
-- [validators.py](file://real_trade/bybit/utils/validators.py#L33-L183)
+- [base.py](file://real_trade/strategies/base.py#L19-L159)
 
 ## 策略实现示例
 
-### 趋势跟踪策略
+### 均线交叉策略
 
-基于移动平均线交叉的趋势跟踪策略是最经典的量化交易策略之一。
+MACrossStrategy是基于RealTradeStrategyBase实现的经典趋势跟踪策略。
 
 **策略要点**：
-- 使用短期和长期移动平均线的交叉信号
-- 金叉买入，死叉卖出
-- 可结合止损止盈机制
-- 支持动态仓位管理
+- 使用SMA或EMA均线的交叉信号
+- 金叉买入，死叉卖出的简单逻辑
+- 支持参数化配置（快慢周期、均线类型）
+- 集成内置的风险管理功能
 
-### 均值回归策略
+**策略执行流程**：
+1. 计算快慢均线
+2. 检查交叉信号
+3. 应用止损止盈检查
+4. 根据信号提交订单
+5. 自动计算仓位大小
 
-均值回归策略适用于震荡市场环境。
+### 复杂策略示例
 
-**策略原理**：
-- 当价格偏离均值过多时进行反向交易
-- 使用布林带或标准差作为判断标准
-- 在支撑阻力位附近进行高抛低吸
+#### full_framework_demo.py综合演示
 
-### 套利交易策略
+full_framework_demo.py展示了real_trade框架的完整功能集合。
 
-套利策略通过利用不同市场或时间点的价格差异获利。
+**演示内容**：
+- 多种策略类型的综合回测
+- 高级分析器的使用
+- 完整的交易流程演示
+- 性能对比和结果分析
 
-**实施方式**：
-- 跨市场套利（不同交易所间价差）
-- 期现套利（期货与现货价差）
-- 时间套利（不同到期日合约价差）
+**策略对比**：
+- 基础智能策略
+- AI增强策略  
+- 高频交易策略
+- 综合交易策略
 
 **章节来源**
-- [base.py](file://real_trade/bybit/strategies/base.py#L151-L191)
+- [ma_cross.py](file://real_trade/strategies/trend/ma_cross.py#L15-L51)
+- [full_framework_demo.py](file://real_trade/examples/full_framework_demo.py#L29-L88)
 
 ## 最佳实践指南
 
@@ -468,9 +498,6 @@ J --> K[配置生效]
    - 集成测试验证完整流程
    - 回放测试验证历史表现
 
-**章节来源**
-- [README.md](file://samples/ccxt-bybit/README.md#L345-L382)
-
 ## 安全配置指南
 
 ### API密钥保护
@@ -528,20 +555,22 @@ J --> K[配置生效]
 
 ## 结论
 
-Bybit示例与最佳实践文档提供了完整的量化交易解决方案。通过官方Bybit模块和CCXT示例，用户可以快速搭建专业级的算法交易系统。
+real_trade框架为Backtrader提供了完整的加密货币交易解决方案。通过模块化的设计和丰富的功能支持，用户可以快速构建专业级的算法交易系统。
 
 **关键优势**：
 - 完整的模拟和实盘交易支持
 - 灵活的配置管理系统
 - 丰富的风险管理功能
-- 专业的性能优化建议
-- 全面的安全配置指导
+- 统一的运行器接口
+- 完善的监控和通知机制
 
 **实施建议**：
-1. 从基础示例开始，逐步深入理解系统架构
+1. 从quickstart示例开始，逐步深入理解框架架构
 2. 充分进行回测和模拟交易验证
 3. 建立完善的风险管理体系
 4. 制定严格的合规和安全制度
 5. 持续监控和优化交易系统
 
-通过遵循本文档的最佳实践，用户可以构建稳定、高效、安全的Bybit交易系统，在竞争激烈的量化交易市场中获得持续的收益。
+通过遵循本文档的最佳实践，用户可以构建稳定、高效、安全的加密货币交易系统，在竞争激烈的量化交易市场中获得持续的收益。
+
+**重要说明**：由于原samples/ccxt-bybit目录下的Bybit示例文件已被删除，本版本文档完全基于real_trade框架的新实现。real_trade框架提供了更完善的模块化架构和更丰富的功能支持，是当前推荐的实现方案。

@@ -2,123 +2,111 @@
 
 <cite>
 **本文档引用的文件**
-- [real_trade/__init__.py](file://real_trade/__init__.py)
-- [real_trade/stores/__init__.py](file://real_trade/stores/__init__.py)
-- [real_trade/brokers/__init__.py](file://real_trade/brokers/__init__.py)
-- [real_trade/feeds/__init__.py](file://real_trade/feeds/__init__.py)
-- [real_trade/stores/binancestore.py](file://real_trade/stores/binancestore.py)
-- [real_trade/brokers/binancebroker.py](file://real_trade/brokers/binancebroker.py)
-- [real_trade/feeds/binancedata.py](file://real_trade/feeds/binancedata.py)
-- [real_trade/utils/config.py](file://real_trade/utils/config.py)
-- [real_trade/engine/__init__.py](file://real_trade/engine/__init__.py)
-- [real_trade/examples/config_example.py](file://real_trade/examples/config_example.py)
-- [real_trade/config/binance/futures_testnet.json.template](file://real_trade/config/binance/futures_testnet.json.template)
-- [real_trade/config/binance/spot_testnet.json.template](file://real_trade/config/binance/spot_testnet.json.template)
-- [real_trade/tools/binance/config_generator.py](file://real_trade/tools/binance/config_generator.py)
-- [real_trade/tools/binance/config_validator.py](file://real_trade/tools/binance/config_validator.py)
+- [backtrader/stores/binance.py](file://backtrader/stores/binance.py)
+- [backtrader/brokers/binance.py](file://backtrader/brokers/binance.py)
+- [backtrader/feeds/binance.py](file://backtrader/feeds/binance.py)
+- [backtrader/stores/__init__.py](file://backtrader/stores/__init__.py)
+- [backtrader/__init__.py](file://backtrader/__init__.py)
+- [examples/binance_example.py](file://examples/binance_example.py)
+- [samples/binance-test/binance_local_test.py](file://samples/binance-test/binance_local_test.py)
+- [samples/binance-test/binance_quick_start.py](file://samples/binance-test/binance_quick_start.py)
+- [samples/binance-test/binance_test.py](file://samples/binance-test/binance_test.py)
 </cite>
 
 ## 更新摘要
 **所做更改**
-- 更新模块结构以反映从 `real_trade/binance/` 到 `real_trade/stores/`, `real_trade/brokers/`, `real_trade/feeds/` 的模块化重组
-- 更新所有导入路径以使用新的模块组织结构
-- 更新核心组件的导入和使用方式
-- 更新配置系统架构说明
-- 更新示例代码和最佳实践指南
+- 更新模块结构以反映从独立real_trade模块到backtrader主框架的完全整合
+- 更新所有导入路径以使用backtrader内建的stores、brokers、feeds命名空间
+- 更新核心组件的backtrader框架原生集成说明
+- 更新示例代码以使用backtrader官方API
+- 更新架构说明以反映backtrader原生支持和设计模式
 
 ## 目录
 1. [简介](#简介)
-2. [模块结构重组](#模块结构重组)
-3. [核心组件](#核心组件)
-4. [架构概览](#架构概览)
+2. [backtrader框架原生集成](#backtrader框架原生集成)
+3. [核心组件架构](#核心组件架构)
+4. [backtrader原生设计模式](#backtrader原生设计模式)
 5. [详细组件分析](#详细组件分析)
-6. [配置管理系统](#配置管理系统)
-7. [示例代码详解](#示例代码详解)
-8. [模块化优势](#模块化优势)
-9. [迁移指南](#迁移指南)
-10. [性能考虑](#性能考虑)
-11. [故障排除指南](#故障排除指南)
-12. [最佳实践指南](#最佳实践指南)
-13. [结论](#结论)
-14. [附录](#附录)
+6. [示例代码详解](#示例代码详解)
+7. [最佳实践指南](#最佳实践指南)
+8. [故障排除指南](#故障排除指南)
+9. [性能考虑](#性能考虑)
+10. [迁移指南](#迁移指南)
+11. [结论](#结论)
 
 ## 简介
 
-Binance交易所集成为基于CCXT库的专业算法交易系统，经过模块结构重组后，提供了更加清晰和可维护的架构设计。新系统采用三层模块化组织：`real_trade/stores/`（交易所连接管理）、`real_trade/brokers/`（交易经纪商）、`real_trade/feeds/`（数据源），为算法交易提供了标准化且高度模块化的接口。
+Binance交易所集成为backtrader主框架提供的官方原生模块化组件，经过深度整合后，提供了更加稳定、高效且符合backtrader设计哲学的算法交易解决方案。新系统采用backtrader官方的stores、brokers、feeds三层架构设计，通过统一的接口抽象实现了与Binance交易所的深度集成。
 
-系统支持多种交易模式，包括现货交易、杠杆交易、Demo Trading测试网和实盘交易。通过统一的配置系统和模块化设计，用户可以轻松配置API密钥、交易对选择、时间框架、资金管理和风险控制等关键参数。
+系统支持多种交易模式，包括现货交易、杠杆交易、测试网和实盘交易。通过backtrader的原生配置系统和模块化设计，用户可以轻松配置API密钥、交易对选择、时间框架、资金管理和风险控制等关键参数。
 
-**更新** 模块结构重组后，导入路径从 `real_trade.binance.*` 更新为 `real_trade.stores.*`、`real_trade.brokers.*`、`real_trade.feeds.*`，提供了更加清晰的模块边界和职责分离。
+**更新** 系统已完成从独立real_trade模块到backtrader主框架的完全整合，所有组件现在都是backtrader官方支持的一部分，提供了更好的兼容性和维护性。组件遵循backtrader的MetaClass注册模式，实现了真正的框架原生集成。
 
-## 模块结构重组
+## backtrader框架原生集成
 
-**更新** 系统已完成从 `real_trade/binance/` 到 `real_trade/stores/`, `real_trade/brokers/`, `real_trade/feeds/` 的模块化重组，实现了更好的代码组织和职责分离：
+**更新** 系统采用backtrader官方的原生架构设计，通过统一的接口抽象实现了与Binance交易所的深度集成：
 
 ```mermaid
 graph TB
-subgraph "重组后的模块结构"
-A[real_trade/] --> B[stores/]
+subgraph "backtrader主框架"
+A[backtrader/] --> B[stores/]
 A --> C[brokers/]
 A --> D[feeds/]
-A --> E[utils/]
-A --> F[engine/]
-A --> G[config/]
-A --> H[examples/]
-A --> I[tests/]
-A --> J[tools/]
+A --> E[core/]
 end
-subgraph "Stores模块"
-B --> B1[basestore.py]
-B --> B2[binancestore.py]
+subgraph "Binance集成模块"
+B --> B1[binance.py]
+C --> C1[binance.py]
+D --> D1[binance.py]
 end
-subgraph "Brokers模块"
-C --> C1[basebroker.py]
-C --> C2[binancebroker.py]
+subgraph "backtrader核心功能"
+E --> E1[Cerebro引擎]
+E --> E2[策略框架]
+E --> E3[数据流处理]
+E --> E4[订单管理]
 end
-subgraph "Feeds模块"
-D --> D1[basedata.py]
-D --> D2[basewebsocket.py]
-D --> D3[binancedata.py]
+subgraph "外部依赖"
+F[ccxt库]
+G[Binance API]
+H[Testnet环境]
+I[代理服务器]
 end
-subgraph "配置系统"
-E --> E1[config.py]
-F --> F1[lifecycle.py]
-F --> F2[runner.py]
-F --> F3[scheduler.py]
-G --> G1[binance/]
-end
+B1 --> F
+C1 --> F
+D1 --> F
+F --> G
+G --> H
+F --> I
 ```
 
 **图表来源**
-- [real_trade/__init__.py](file://real_trade/__init__.py#L8-L19)
-- [real_trade/stores/__init__.py](file://real_trade/stores/__init__.py#L1-L17)
-- [real_trade/brokers/__init__.py](file://real_trade/brokers/__init__.py#L1-L17)
-- [real_trade/feeds/__init__.py](file://real_trade/feeds/__init__.py#L1-L18)
+- [backtrader/stores/binance.py](file://backtrader/stores/binance.py#L32-L93)
+- [backtrader/brokers/binance.py](file://backtrader/brokers/binance.py#L30-L51)
+- [backtrader/feeds/binance.py](file://backtrader/feeds/binance.py#L29-L55)
 
 **章节来源**
-- [real_trade/__init__.py](file://real_trade/__init__.py#L1-L78)
-- [real_trade/stores/__init__.py](file://real_trade/stores/__init__.py#L1-L17)
-- [real_trade/brokers/__init__.py](file://real_trade/brokers/__init__.py#L1-L17)
-- [real_trade/feeds/__init__.py](file://real_trade/feeds/__init__.py#L1-L18)
+- [backtrader/stores/binance.py](file://backtrader/stores/binance.py#L1-L276)
+- [backtrader/brokers/binance.py](file://backtrader/brokers/binance.py#L1-L382)
+- [backtrader/feeds/binance.py](file://backtrader/feeds/binance.py#L1-L343)
 
-## 核心组件
+## 核心组件架构
 
 ### BinanceStore - 交易所连接管理
 
-**更新** BinanceStore现在位于 `real_trade/stores/` 模块中，继承自BaseStore基类，实现了交易所特定的配置和连接逻辑。
+**更新** BinanceStore现在是backtrader官方stores模块的核心组件，继承自backtrader的Store基类，实现了交易所特定的配置和连接逻辑。
 
 **主要功能特性：**
 - 单例模式管理多个交易所实例
-- 支持Demo Trading测试网和生产环境
+- 支持测试网和生产环境
 - CCXT库集成，支持多种订单类型
 - 代理配置和自动检测
 - 市场类型配置（现货、期货、交割）
 
-**更新** 新增对Binance Futures Demo Trading的完整支持，包括错误处理和版本兼容性检查。
+**更新** 新增对backtrader原生参数系统的完全支持，包括host、port、apikey、secret等标准参数。
 
 ### BinanceBroker - 交易经纪商
 
-**更新** BinanceBroker现在位于 `real_trade/brokers/` 模块中，直接复用BaseBroker的所有功能，无需额外实现。
+**更新** BinanceBroker现在是backtrader官方brokers模块的核心组件，继承自backtrader的BrokerBase基类，直接复用backtrader的完整交易执行逻辑。
 
 **核心能力：**
 - 支持限价单、市价单、止损单等多种订单类型
@@ -126,396 +114,220 @@ end
 - 佣金计算和资金管理
 - 订单状态跟踪和通知
 
+**更新** 新增对backtrader原生订单生命周期管理的完全支持。
+
 ### BinanceData - 数据源
 
-**更新** BinanceData现在位于 `real_trade/feeds/` 模块中，直接复用BaseData的所有功能，专注于数据获取和格式化。
+**更新** BinanceData现在是backtrader官方feeds模块的核心组件，继承自backtrader的DataBase基类，专注于数据获取和格式化。
 
 **数据特性：**
-- 支持多时间框架（1分钟到1周）
+- 支持多时间框架（1分钟到1月）
 - 实时数据流和历史数据回测
 - 交易对过滤和验证
 - 数据同步和完整性检查
 
+**更新** 新增对backtrader原生数据流状态机的完全支持。
+
 **章节来源**
-- [real_trade/stores/binancestore.py](file://real_trade/stores/binancestore.py#L1-L96)
-- [real_trade/brokers/binancebroker.py](file://real_trade/brokers/binancebroker.py#L1-L18)
-- [real_trade/feeds/binancedata.py](file://real_trade/feeds/binancedata.py#L1-L18)
+- [backtrader/stores/binance.py](file://backtrader/stores/binance.py#L32-L276)
+- [backtrader/brokers/binance.py](file://backtrader/brokers/binance.py#L30-L382)
+- [backtrader/feeds/binance.py](file://backtrader/feeds/binance.py#L29-L343)
 
-## 架构概览
+## backtrader原生设计模式
 
-**更新** 系统采用新的三层模块化架构设计，通过统一的接口抽象实现了与Binance交易所的深度集成：
+**更新** 系统采用backtrader官方的MetaClass注册模式，所有组件都遵循backtrader的设计哲学：
 
 ```mermaid
 graph TB
-subgraph "应用层"
-A[Backtrader策略]
-B[配置管理器]
-C[示例代码]
-D[测试套件]
-E[配置文件]
-F[GlobalConfig对象]
-G[字典配置]
+subgraph "backtrader原生架构"
+A[MetaParams基类]
+B[MetaSingleton元类]
+C[BrokerBase基类]
+D[DataBase基类]
+E[Store基类]
 end
-subgraph "业务逻辑层"
-H[create_engine_from_config]
-I[create_engine]
-J[BinanceStore]
-K[BinanceBroker]
-L[BinanceData]
+subgraph "Binance组件层次结构"
+F[BinanceStore]
+G[BinanceBroker]
+H[BinanceData]
 end
-subgraph "模块化层"
-M[real_trade.stores]
-N[real_trade.brokers]
-O[real_trade.feeds]
+subgraph "注册机制"
+I[MetaBinanceBroker]
+J[MetaBinanceData]
+K[自动注册到Store]
 end
-subgraph "通用基类层"
-P[BaseStore]
-Q[BaseBroker]
-R[BaseData]
-end
-subgraph "外部服务层"
-S[CCXT库]
-T[Binance API]
-U[Demo Trading]
-V[Proxy服务器]
-W[环境变量]
-end
-A --> K
-B --> H
-C --> H
+A --> F
+B --> F
+C --> G
 D --> H
-E --> H
-F --> H
-G --> H
-H --> I
-I --> J
-I --> K
-I --> L
-J --> M
-K --> N
-L --> O
-M --> P
-N --> Q
-O --> R
-P --> S
-Q --> S
-R --> S
-S --> T
-S --> U
-S --> V
-S --> W
+I --> G
+J --> H
+K --> F
+K --> G
+K --> H
 ```
 
 **图表来源**
-- [real_trade/examples/config_example.py](file://real_trade/examples/config_example.py#L33-L36)
-- [real_trade/utils/config.py](file://real_trade/utils/config.py#L66-L169)
+- [backtrader/stores/binance.py](file://backtrader/stores/binance.py#L18-L30)
+- [backtrader/brokers/binance.py](file://backtrader/brokers/binance.py#L19-L28)
+- [backtrader/feeds/binance.py](file://backtrader/feeds/binance.py#L18-L27)
+
+### 单例模式实现
+```mermaid
+classDiagram
+class MetaSingleton {
+- _singleton : BinanceStore
++ __call__(*args, **kwargs) BinanceStore
+}
+class BinanceStore {
+- _instance : BinanceStore
+- _exchange : ccxt.binance
+- _connected : bool
+- _lock : threading.Lock
+- _reqId : iterator
++ get_instance(**kwargs) BinanceStore
++ start(**kwargs) bool
++ stop() void
++ test_connection() bool
++ get_balance(currency) dict
++ submit_order(params) dict
++ get_contract_details(symbol) dict
++ fetch_ohlcv(symbol, timeframe, since, limit) list
++ cancel_order(order_id, symbol) dict
+}
+class MetaBinanceBroker {
++ __init__(cls, name, bases, dct) void
+}
+class BinanceBroker {
++ __init__(self, store) void
++ buy(owner, data, size, ...) Order
++ sell(owner, data, size, ...) Order
++ submit(order, chksubmit) Order
++ cancel(order) bool
+}
+class MetaBinanceData {
++ __init__(cls, name, bases, dct) void
+}
+class BinanceData {
++ __init__(self, store) void
++ start() void
++ stop() void
++ _load() bool
++ _load_history() bool
++ _load_live() bool
+}
+MetaSingleton <|-- BinanceStore
+BinanceStore <|-- MetaBinanceBroker
+BinanceBroker <|-- BinanceData
+```
+
+**图表来源**
+- [backtrader/stores/binance.py](file://backtrader/stores/binance.py#L18-L93)
+- [backtrader/brokers/binance.py](file://backtrader/brokers/binance.py#L19-L70)
+- [backtrader/feeds/binance.py](file://backtrader/feeds/binance.py#L18-L55)
+
+**章节来源**
+- [backtrader/stores/binance.py](file://backtrader/stores/binance.py#L18-L93)
+- [backtrader/brokers/binance.py](file://backtrader/brokers/binance.py#L19-L70)
+- [backtrader/feeds/binance.py](file://backtrader/feeds/binance.py#L18-L55)
 
 ## 详细组件分析
 
 ### BinanceStore组件详解
 
-**更新** BinanceStore现在位于 `real_trade/stores/binancestore.py`，实现了完整的交易所连接管理功能：
+**更新** BinanceStore现在是backtrader官方stores模块的核心组件，实现了完整的交易所连接管理功能：
 
-#### 单例模式实现
-```mermaid
-classDiagram
-class BinanceStore {
--_instances : dict
--_lock : threading.Lock
-+get_instance(apikey, secret, testnet, proxy) BinanceStore
-+_create_exchange(market_type) void
--_exchange : ccxt.binance
--testnet : bool
--market_type : str
--proxy : str
-}
-class BaseStore {
-<<abstract>>
-#_instances : dict
-#_lock : threading.Lock
-+get_instance() BaseStore
-+_create_exchange() void
-+exchange : Exchange
-+test_connection() bool
-+get_balance(currency) float
-+get_positions(symbols) list
-}
-BinanceStore --|> BaseStore
-```
-
-**图表来源**
-- [real_trade/stores/binancestore.py](file://real_trade/stores/binancestore.py#L25-L48)
-- [real_trade/stores/basestore.py](file://real_trade/stores/basestore.py#L17-L194)
-
-#### Demo Trading集成
-系统支持Binance的Demo Trading功能，这是Binance弃用传统测试网后的新方案：
+#### 测试网集成
+系统支持Binance测试网功能，这是Binance官方推荐的测试环境：
 
 **配置流程：**
-1. 检测CCXT版本兼容性
-2. 启用Demo Trading模式
+1. 检测ccxt库可用性
+2. 启用测试网模式
 3. 设置市场类型参数
 4. 配置代理选项
 
-**更新** 新增详细的错误处理和版本兼容性检查，确保系统稳定性。
+**更新** 新增详细的错误处理和依赖检查，确保系统稳定性。
 
 **章节来源**
-- [real_trade/stores/binancestore.py](file://real_trade/stores/binancestore.py#L65-L96)
+- [backtrader/stores/binance.py](file://backtrader/stores/binance.py#L94-L151)
 
-## 配置管理系统
+### backtrader原生基类架构
 
-**更新** 新的模块化结构保持了完整的配置管理系统，提供灵活的配置加载、验证和管理功能：
+**更新** 新架构采用backtrader官方的基类设计，所有组件都继承自对应的backtrader基类：
 
-### GlobalConfig统一配置
+#### Store基类
+- 提供统一的连接管理接口
+- 支持backtrader原生参数系统
+- 标准化的连接测试和数据获取方法
 
-系统使用GlobalConfig类作为统一配置管理器，支持多种配置来源：
+#### BrokerBase基类  
+- 实现完整的交易执行逻辑
+- 支持backtrader原生订单生命周期
+- 标准化的订单管理和资金管理
 
-**核心字段：**
-- 交易所配置：exchange, apikey, secret, testnet, proxy, market_type
-- 交易配置：symbol, timeframe, paper_trading, cash, commission, backtest
-- 数据配置：historical_limit, fromdate, todate
-- 风控配置：max_position_pct, risk_per_trade, max_drawdown_pct, max_daily_trades
-- 日志配置：log_level, log_file
-- 通知配置：notify_on_trade, notify_on_error
-- 额外配置：extra
-
-**配置加载方式：**
-1. **扁平结构**：与GlobalConfig字段完全一致
-2. **嵌套结构**：支持api/trading/data/proxy/strategy等分组
-3. **环境变量**：支持RT_前缀的环境变量加载
+#### DataBase基类
+- 提供历史和实时数据加载
+- 统一的时间框架映射
+- 标准化的数据格式化
 
 **章节来源**
-- [real_trade/utils/config.py](file://real_trade/utils/config.py#L20-L169)
-
-### 配置文件格式
-
-**扁平结构示例：**
-```json
-{
-  "exchange": "binance",
-  "apikey": "",
-  "secret": "",
-  "testnet": true,
-  "market_type": "future",
-  "symbol": "BTC/USDT",
-  "timeframe": "15m",
-  "paper_trading": true,
-  "cash": 10000.0,
-  "commission": 0.001,
-  "backtest": true,
-  "historical_limit": 500
-}
-```
-
-**嵌套结构示例：**
-```json
-{
-  "api": {"apikey": "", "secret": "", "testnet": true, "market_type": "future"},
-  "trading": {"paper_trading": true, "initial_cash": 10000.0, "commission": 0.001},
-  "data": {"symbol": "BTC/USDT", "timeframe": "15m", "backtest": true, "historical_limit": 500},
-  "proxy": {"proxy_url": ""}
-}
-```
-
-**章节来源**
-- [real_trade/config/binance/README.md](file://real_trade/config/binance/README.md#L37-L132)
-- [real_trade/config/binance/futures_testnet.json.template](file://real_trade/config/binance/futures_testnet.json.template#L1-L15)
-- [real_trade/config/binance/spot_testnet.json.template](file://real_trade/config/binance/spot_testnet.json.template#L1-L15)
+- [backtrader/stores/binance.py](file://backtrader/stores/binance.py#L32-L93)
+- [backtrader/brokers/binance.py](file://backtrader/brokers/binance.py#L30-L70)
+- [backtrader/feeds/binance.py](file://backtrader/feeds/binance.py#L29-L95)
 
 ## 示例代码详解
 
-**更新** 所有示例代码已更新以使用新的模块导入路径：
+**更新** 所有示例代码已更新以使用backtrader官方API：
 
-### 配置文件示例
+### 基础使用示例
 
-**config_example.py** 展示了如何使用JSON配置文件创建Binance交易引擎：
+**binance_example.py** 展示了如何使用backtrader官方API创建Binance交易组件：
 
 **导入更新：**
 ```python
-from real_trade.brokers import BinanceBroker
-from real_trade.feeds import BinanceData
-from real_trade.stores import BinanceStore
-from real_trade.utils.config import GlobalConfig
+from backtrader import bt
 ```
 
 **运行模式：**
-1. **回测模式（默认）**：使用futures_backtest.json
+1. **回测模式**：使用bt.feeds.BinanceData进行历史数据回测
    - 历史数据回测
    - 本地模拟订单
    - 不需要API密钥
 
-2. **Demo Trading实盘测试**：使用futures_live_demo.json
-   - 连接Demo Trading
+2. **实盘测试**：使用bt.stores.BinanceStore连接测试网
+   - 连接Binance测试网
    - 真实订单流程
-   - 需要Demo Trading API密钥
+   - 需要测试网API密钥
 
 3. **生产实盘**：创建自定义配置
-   - testnet: false
-   - paper_trading: false
-   - backtest: false
+   - testnet: False
+   - paper_trading: False
+   - backtest: False
 
 **策略实现：**
-- 可配置策略类ConfigurableStrategy
+- 使用bt.Strategy基类
 - RSI和均线交叉策略
 - 动态资金管理和止损机制
 - 详细的交易日志和统计输出
 
-### 连接测试示例
+### 快速开始示例
 
-**testnet_futures_test.py** 测试连接到Binance Futures Testnet：
+**binance_quick_start.py** 提供了最简化的Binance实盘交易示例：
 
 **功能特性：**
-- 验证API密钥有效性
-- 获取账户余额和市场数据
-- 检查持仓信息和历史K线数据
-- 完整的错误处理和调试信息
+- 配置Binance Store（测试网）
+- 添加数据（BTC/USDT）
+- 设置初始资金和佣金
+- 运行回测演示
 
 **章节来源**
-- [real_trade/examples/config_example.py](file://real_trade/examples/config_example.py#L1-L259)
-
-## 模块化优势
-
-**更新** 新的模块化结构带来了显著的优势：
-
-### 清晰的职责分离
-- **Stores模块**：专注于交易所连接管理
-- **Brokers模块**：专注于交易执行逻辑
-- **Feeds模块**：专注于数据获取和处理
-
-### 更好的可维护性
-- 每个模块职责单一，易于理解和维护
-- 模块间依赖关系清晰，降低耦合度
-- 支持独立的功能扩展和替换
-
-### 灵活的组合使用
-- 可以单独使用某个模块的功能
-- 支持不同交易所的Store实现
-- 易于添加新的数据源和交易接口
-
-### 标准化的接口
-- 所有模块都遵循相同的接口规范
-- 统一的配置管理和初始化流程
-- 一致的错误处理和日志记录
-
-## 迁移指南
-
-**更新** 从旧的 `real_trade/binance/` 结构迁移到新的模块化结构：
-
-### 导入路径更新
-
-**旧版本：**
-```python
-from real_trade.binance import BinanceStore, BinanceBroker, BinanceData
-```
-
-**新版本：**
-```python
-from real_trade.stores import BinanceStore
-from real_trade.brokers import BinanceBroker
-from real_trade.feeds import BinanceData
-```
-
-### 配置系统使用
-
-**旧版本：**
-```python
-from real_trade.binance.utils.config import GlobalConfig
-```
-
-**新版本：**
-```python
-from real_trade.utils.config import GlobalConfig
-```
-
-### 工具模块迁移
-
-**旧版本：**
-```python
-from real_trade.binance.tools.config_generator import ConfigGenerator
-from real_trade.binance.tools.config_validator import ConfigValidator
-```
-
-**新版本：**
-```python
-from real_trade.tools.binance.config_generator import ConfigGenerator
-from real_trade.tools.binance.config_validator import ConfigValidator
-```
-
-### 配置文件位置
-
-**旧版本：**
-```
-real_trade/binance/config/*.json
-```
-
-**新版本：**
-```
-real_trade/config/binance/*.json
-```
-
-## 性能考虑
-
-### 连接优化
-- 使用单例模式避免重复连接
-- CCXT rate limit启用确保API使用合规
-- 代理配置减少网络延迟
-
-### 内存管理
-- BaseStore使用弱引用避免循环引用
-- 及时清理未使用的交易所实例
-- 控制历史数据缓存大小
-
-### 并发处理
-- 线程安全的单例实现
-- 交易订单的异步处理
-- 非阻塞的订单状态查询
-
-**更新** 新增对Demo Trading环境的性能优化建议。
-
-## 故障排除指南
-
-### 常见问题及解决方案
-
-**API连接问题：**
-- 检查Demo Trading密钥有效性
-- 验证网络连接和代理设置
-- 确认CCXT版本兼容性
-
-**订单执行问题：**
-- 检查账户余额和保证金
-- 验证交易对和最小订单量
-- 确认市场类型配置正确
-
-**数据同步问题：**
-- 检查时间同步设置
-- 验证数据源可用性
-- 调整历史数据加载参数
-
-### 调试工具
-
-系统提供了多种调试和测试工具：
-
-**配置验证：**
-- 配置文件格式验证
-- 参数范围检查
-- 依赖库版本确认
-
-**订单测试：**
-- 限价单测试：验证限价订单执行
-- 市价单测试：验证市价订单执行
-- 持仓管理测试：验证开平仓操作
-
-**连接测试：**
-- Demo Trading连接测试
-- API密钥有效性验证
-- 市场数据获取测试
-
-**章节来源**
-- [real_trade/tools/binance/config_validator.py](file://real_trade/tools/binance/config_validator.py#L1-L185)
+- [examples/binance_example.py](file://examples/binance_example.py#L1-L161)
+- [samples/binance-test/binance_quick_start.py](file://samples/binance-test/binance_quick_start.py#L1-L207)
 
 ## 最佳实践指南
 
 ### 开发阶段
-1. 使用Demo Trading进行功能验证
+1. 使用测试网进行功能验证
 2. 从小额资金开始实盘测试
 3. 建立完整的测试用例
 4. 实施风险管理策略
@@ -532,118 +344,232 @@ real_trade/config/binance/*.json
 3. 定期轮换API密钥
 4. 实施访问控制和审计日志
 
-**更新** 新增针对Binance Futures Demo Trading的特殊注意事项和最佳实践。
+**更新** 新增针对backtrader原生安全最佳实践的指导。
+
+## 故障排除指南
+
+### 常见问题及解决方案
+
+**API连接问题：**
+- 检查ccxt库安装状态
+- 验证测试网密钥有效性
+- 确认网络连接和代理设置
+
+**订单执行问题：**
+- 检查账户余额和保证金
+- 验证交易对和最小订单量
+- 确认市场类型配置正确
+
+**数据同步问题：**
+- 检查时间同步设置
+- 验证数据源可用性
+- 调整历史数据加载参数
+
+### 调试工具
+
+系统提供了多种调试和测试工具：
+
+**连接测试：**
+- 使用store.start()验证连接
+- 检查store.is_connected状态
+- 验证get_balance()返回值
+
+**订单测试：**
+- 限价单测试：验证限价订单执行
+- 市价单测试：验证市价订单执行
+- 持仓管理测试：验证开平仓操作
+
+**数据测试：**
+- 使用fetch_ohlcv()获取K线数据
+- 验证数据格式和完整性
+- 检查时间戳一致性
+
+**章节来源**
+- [backtrader/stores/binance.py](file://backtrader/stores/binance.py#L130-L161)
+- [backtrader/brokers/binance.py](file://backtrader/brokers/binance.py#L71-L98)
+- [backtrader/feeds/binance.py](file://backtrader/feeds/binance.py#L103-L137)
+
+## 性能考虑
+
+### 连接优化
+- 使用单例模式避免重复连接
+- CCXT rate limit启用确保API使用合规
+- 代理配置减少网络延迟
+
+### 内存管理
+- 使用backtrader原生内存管理
+- 及时清理未使用的数据缓冲
+- 控制历史数据缓存大小
+
+### 并发处理
+- 线程安全的单例实现
+- backtrader原生订单的异步处理
+- 非阻塞的订单状态查询
+
+**更新** 新增对backtrader原生性能优化特性的利用。
+
+## 迁移指南
+
+**更新** 从独立real_trade模块迁移到backtrader主框架：
+
+### 导入路径更新
+
+**旧版本（独立模块）：**
+```python
+from real_trade.stores import BinanceStore
+from real_trade.brokers import BinanceBroker
+from real_trade.feeds import BinanceData
+```
+
+**新版本（backtrader原生）：**
+```python
+import backtrader as bt
+store = bt.stores.BinanceStore(...)
+data = bt.feeds.BinanceData(...)
+broker = bt.brokers.BinanceBroker(...)
+```
+
+### API使用更新
+
+**旧版本：**
+```python
+store = BinanceStore.get_instance(testnet=True)
+```
+
+**新版本：**
+```python
+store = bt.stores.BinanceStore(testnet=True)
+```
+
+### 配置系统使用
+
+**旧版本：**
+```python
+from real_trade.utils.config import GlobalConfig
+```
+
+**新版本：**
+```python
+# 使用backtrader原生配置
+cerebro = bt.Cerebro()
+cerebro.broker.setcash(10000)
+cerebro.broker.setcommission(0.001)
+```
+
+### 示例代码迁移
+
+**旧版本：**
+```python
+from real_trade.examples.config_example import create_engine_from_config
+```
+
+**新版本：**
+```python
+# 直接使用backtrader官方API
+import backtrader as bt
+```
 
 ## 结论
 
-Binance交易所集成为算法交易提供了完整、可靠且高度模块化的解决方案。通过从 `real_trade/binance/` 到 `real_trade/stores/`, `real_trade/brokers/`, `real_trade/feeds/` 的模块结构重组，系统实现了：
+Binance交易所集成为backtrader主框架提供了原生、稳定且高效的算法交易解决方案。通过从独立real_trade模块到backtrader主框架的完全整合，系统实现了：
 
-1. **清晰的职责分离**：Stores/Brokers/Feeds三层架构明确分工
-2. **统一的配置管理**：通过GlobalConfig实现参数化配置
-3. **灵活的模块化设计**：支持独立使用和组合扩展
-4. **标准化的接口规范**：所有模块遵循统一的实现标准
-5. **完善的工具支持**：提供配置生成器、验证器等开发工具
+1. **backtrader原生支持**：所有组件都是backtrader官方支持的一部分
+2. **统一的API接口**：通过bt.stores、bt.feeds、bt.brokers命名空间提供一致的使用体验
+3. **深度框架集成**：与backtrader的Cerebro引擎、策略框架、订单系统完全融合
+4. **标准化的配置管理**：使用backtrader原生参数系统和配置机制
+5. **完善的工具支持**：提供完整的示例代码和最佳实践指导
 6. **专业的故障排除**：内置诊断工具和问题解决方案
 
-**更新** 新的模块化结构为开发者提供了更加专业和易用的Binance API使用体验，既适合初学者快速上手，也满足专业交易者的复杂需求。迁移指南确保了向后兼容性和平滑过渡。
+**更新** 新的backtrader原生集成为开发者提供了更加专业和易用的Binance API使用体验，既适合初学者快速上手，也满足专业交易者的复杂需求。完整的迁移指南确保了向后兼容性和平滑过渡。
 
 ## 附录
 
-### 配置文件模板
+### 完整使用示例
 
-**Futures测试网模板：**
-```json
-{
-  "exchange": "binance",
-  "apikey": "YOUR_FUTURES_DEMO_TRADING_API_KEY",
-  "secret": "YOUR_FUTURES_DEMO_TRADING_SECRET",
-  "testnet": true,
-  "market_type": "future",
-  "symbol": "BTC/USDT",
-  "timeframe": "15m",
-  "paper_trading": true,
-  "cash": 10000.0,
-  "commission": 0.001,
-  "backtest": true,
-  "historical_limit": 500
-}
-```
-
-**Spot测试网模板：**
-```json
-{
-  "exchange": "binance",
-  "apikey": "YOUR_SPOT_DEMO_TRADING_API_KEY",
-  "secret": "YOUR_SPOT_DEMO_TRADING_SECRET",
-  "testnet": true,
-  "market_type": "spot",
-  "symbol": "BTC/USDT",
-  "timeframe": "1h",
-  "paper_trading": true,
-  "cash": 10000.0,
-  "commission": 0.001,
-  "backtest": true,
-  "historical_limit": 500
-}
-```
-
-### 快速开始示例
-
-**使用新的导入路径：**
+**基础回测示例：**
 ```python
-from real_trade.stores import BinanceStore
-from real_trade.brokers import BinanceBroker
-from real_trade.feeds import BinanceData
 import backtrader as bt
 
-store = BinanceStore.get_instance(testnet=True)
-broker = BinanceBroker(store, paper_trading=True)
-data = BinanceData.from_timeframe_string("1h", store, symbol="BTC/USDT", backtest=True)
-
+# 创建Cerebro引擎
 cerebro = bt.Cerebro()
-cerebro.setbroker(broker)
+
+# 创建Binance Store（测试网配置）
+store = bt.stores.BinanceStore(
+    apikey="",  # 实际使用时填写真实的API密钥
+    secret="",  # 实际使用时填写真实的API密钥
+    testnet=True,  # 使用测试网
+)
+
+# 创建数据feed
+data = bt.feeds.BinanceData(
+    store,
+    symbol="BTC/USDT",
+    timeframe=bt.TimeFrame.Days,
+    compression=1,
+    historical=True,  # 只获取历史数据进行回测
+)
+
+# 添加数据到Cerebro
 cerebro.adddata(data)
-cerebro.addstrategy(MyStrategy)
+
+# 设置初始资金和佣金
+cerebro.broker.setcash(10000.0)
+cerebro.broker.setcommission(commission=0.001)
+
+# 运行回测
 cerebro.run()
 ```
 
-**使用配置文件：**
+**实盘交易示例：**
 ```python
-from real_trade.examples.config_example import create_engine_from_config
-from real_trade.utils.config import GlobalConfig
+import backtrader as bt
 
-cfg = GlobalConfig.from_json("config/binance/spot_testnet.json")
-store, broker, data = create_engine_from_config(cfg)
-```
+# 创建策略
+class MyStrategy(bt.Strategy):
+    def __init__(self):
+        self.sma = bt.indicators.SimpleMovingAverage(self.data, period=15)
+    
+    def next(self):
+        if not self.position:
+            if self.data.close[0] > self.sma[0]:
+                self.buy(size=0.001)
+        else:
+            if self.data.close[0] < self.sma[0]:
+                self.sell(size=0.001)
 
-**使用GlobalConfig对象：**
-```python
-from real_trade.utils.config import GlobalConfig
-from real_trade.stores import BinanceStore
-from real_trade.brokers import BinanceBroker
-from real_trade.feeds import BinanceData
+# 创建Cerebro引擎
+cerebro = bt.Cerebro()
 
-cfg = GlobalConfig(symbol="ETH/USDT", timeframe="15m", backtest=True)
-store = BinanceStore.get_instance(
-    apikey=cfg.apikey if not cfg.backtest else "",
-    secret=cfg.secret if not cfg.backtest else "",
-    testnet=cfg.testnet,
-    market_type=cfg.market_type
+# 创建Binance Store（实盘配置）
+store = bt.stores.BinanceStore(
+    apikey="YOUR_REAL_API_KEY",
+    secret="YOUR_REAL_SECRET",
+    testnet=False,
 )
-broker = BinanceBroker(store, paper_trading=cfg.paper_trading, cash=cfg.cash)
-data = BinanceData.from_timeframe_string(cfg.timeframe, store, symbol=cfg.symbol, backtest=cfg.backtest)
+
+# 添加数据和策略
+data = store.getdata(dataname="BTCUSDT")
+cerebro.adddata(data)
+cerebro.addstrategy(MyStrategy)
+
+# 设置资金和佣金
+cerebro.broker.setcash(10000.0)
+cerebro.broker.setcommission(0.001)
+
+# 运行实盘
+cerebro.run()
 ```
 
 ### 错误处理和重试机制
 
 **更新** 新增详细的错误处理和重试机制建议：
 
-1. **API限制处理**：实现指数退避重试
+1. **API限制处理**：使用backtrader原生的重试机制
 2. **网络异常处理**：连接超时和重连机制
 3. **订单状态监控**：定期查询订单状态
 4. **数据同步检查**：验证数据完整性
 5. **资源清理**：确保连接和资源正确释放
 
 **章节来源**
-- [real_trade/config/binance/futures_testnet.json.template](file://real_trade/config/binance/futures_testnet.json.template#L1-L15)
-- [real_trade/config/binance/spot_testnet.json.template](file://real_trade/config/binance/spot_testnet.json.template#L1-L15)
+- [examples/binance_example.py](file://examples/binance_example.py#L91-L161)
+- [samples/binance-test/binance_test.py](file://samples/binance-test/binance_test.py#L293-L446)
