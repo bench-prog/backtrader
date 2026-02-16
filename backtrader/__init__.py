@@ -18,75 +18,60 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ###############################################################################
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
-from .version import __version__, __btversion__
-
-from .errors import *
-from . import errors as errors
-
-from .utils import num2date, date2num, time2num, num2time
-
-from .linebuffer import *
-from .functions import *
-
-from .order import *
-from .comminfo import *
-from .trade import *
-from .position import *
-
-from .store import Store
-
-from . import broker as broker
-from .broker import *
-
-from .lineseries import *
-
-from .dataseries import *
-from .feed import *
-from .resamplerfilter import *
-
-from .lineiterator import *
-from .indicator import *
-from .analyzer import *
-from .observer import *
-from .sizer import *
-from .sizers import SizerFix  # old sizer for compatibility
-from .strategy import *
-
-from .writer import *
-
-from .signal import *
-
-from .cerebro import *
-from .timer import *
-from .flt import *
-
-from . import utils as utils
-
-from . import feeds as feeds
-from . import indicators as indicators
-from . import indicators as ind
-from . import studies as studies
-from . import strategies as strategies
-from . import strategies as strats
-from . import observers as observers
-from . import observers as obs
-from . import analyzers as analyzers
-from . import commissions as commissions
-from . import commissions as comms
-from . import filters as filters
-from . import signals as signals
-from . import sizers as sizers
-from . import stores as stores
-from . import brokers as brokers
-from . import timer as timer
-from . import risk as risk  # Enterprise Risk Management System
-from . import monitoring as monitoring  # Enterprise Monitoring System
-
-from . import talib as talib
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 # Load contributed indicators and studies
 import backtrader.indicators.contrib
 import backtrader.studies.contrib
+
+from . import analyzers as analyzers
+from . import broker as broker
+from . import brokers as brokers
+from . import commissions as commissions
+from . import commissions as comms
+from . import errors as errors
+from . import feeds as feeds
+from . import filters as filters
+from . import indicators as ind
+from . import indicators as indicators
+from . import monitoring as monitoring  # Enterprise Monitoring System
+from . import observers as obs
+from . import observers as observers
+from . import risk as risk  # Enterprise Risk Management System
+from . import config as config  # Enterprise Configuration Management System
+from . import signals as signals
+from . import sizers as sizers
+from . import stores as stores
+from . import strategies as strategies
+from . import strategies as strats
+from . import studies as studies
+from . import talib as talib
+from . import timer as timer
+from . import utils as utils
+from .analyzer import *
+from .broker import *
+from .cerebro import *
+from .comminfo import *
+from .dataseries import *
+from .errors import *
+from .feed import *
+from .flt import *
+from .functions import *
+from .indicator import *
+from .linebuffer import *
+from .lineiterator import *
+from .lineseries import *
+from .observer import *
+from .order import *
+from .position import *
+from .resamplerfilter import *
+from .signal import *
+from .sizer import *
+from .sizers import SizerFix  # old sizer for compatibility
+from .store import Store
+from .strategy import *
+from .timer import *
+from .trade import *
+from .utils import date2num, num2date, num2time, time2num
+from .version import __btversion__, __version__
+from .writer import *
