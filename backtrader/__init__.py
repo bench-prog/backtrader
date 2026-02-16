@@ -29,6 +29,9 @@ from . import broker as broker
 from . import brokers as brokers
 from . import commissions as commissions
 from . import commissions as comms
+from . import config as config  # Enterprise Configuration Management System
+from . import storage as storage  # Enterprise Data Storage System
+from . import messaging as messaging  # Enterprise Message Queue System
 from . import errors as errors
 from . import feeds as feeds
 from . import filters as filters
@@ -38,7 +41,6 @@ from . import monitoring as monitoring  # Enterprise Monitoring System
 from . import observers as obs
 from . import observers as observers
 from . import risk as risk  # Enterprise Risk Management System
-from . import config as config  # Enterprise Configuration Management System
 from . import signals as signals
 from . import sizers as sizers
 from . import stores as stores
