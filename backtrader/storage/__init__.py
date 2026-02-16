@@ -13,30 +13,30 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 # 数据存储组件
 from .data_storage import (
-    DataStorageError,
-    ConnectionPool,
     BaseDataStorage,
-    TimeSeriesStorage,
-    RelationalStorage,
     CacheStorage,
-    ObjectStorage,
+    ConnectionPool,
+    DataStorageError,
     DataStorageManager,
+    ObjectStorage,
+    RelationalStorage,
+    TimeSeriesStorage,
     create_data_storage,
-    create_storage_manager
+    create_storage_manager,
 )
 
 __all__ = [
-    'DataStorageError',
-    'ConnectionPool',
-    'BaseDataStorage',
-    'TimeSeriesStorage',
-    'RelationalStorage',
-    'CacheStorage',
-    'ObjectStorage',
-    'DataStorageManager',
-    'create_data_storage',
-    'create_storage_manager',
+    "DataStorageError",
+    "ConnectionPool",
+    "BaseDataStorage",
+    "TimeSeriesStorage",
+    "RelationalStorage",
+    "CacheStorage",
+    "ObjectStorage",
+    "DataStorageManager",
+    "create_data_storage",
+    "create_storage_manager",
 ]
 
-__version__ = '1.0.0'
-__author__ = 'Backtrader Storage Team'
+__version__ = "1.0.0"
+__author__ = "Backtrader Storage Team"

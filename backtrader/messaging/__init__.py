@@ -13,28 +13,28 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 # 消息队列组件
 from .message_queue import (
-    MessageQueueError,
-    Message,
     BaseMessageQueue,
-    MemoryMessageQueue,
-    RabbitMQMessageQueue,
     KafkaMessageQueue,
+    MemoryMessageQueue,
+    Message,
+    MessageQueueError,
     MessageQueueManager,
+    RabbitMQMessageQueue,
     create_message_queue,
-    create_queue_manager
+    create_queue_manager,
 )
 
 __all__ = [
-    'MessageQueueError',
-    'Message',
-    'BaseMessageQueue',
-    'MemoryMessageQueue',
-    'RabbitMQMessageQueue',
-    'KafkaMessageQueue',
-    'MessageQueueManager',
-    'create_message_queue',
-    'create_queue_manager',
+    "MessageQueueError",
+    "Message",
+    "BaseMessageQueue",
+    "MemoryMessageQueue",
+    "RabbitMQMessageQueue",
+    "KafkaMessageQueue",
+    "MessageQueueManager",
+    "create_message_queue",
+    "create_queue_manager",
 ]
 
-__version__ = '1.0.0'
-__author__ = 'Backtrader Messaging Team'
+__version__ = "1.0.0"
+__author__ = "Backtrader Messaging Team"

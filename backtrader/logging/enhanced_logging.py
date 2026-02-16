@@ -23,7 +23,7 @@ from loguru import logger
 import backtrader as bt
 
 
-class TradingLogger:
+class Logger:
     """
     交易日志管理器
     """
@@ -178,7 +178,7 @@ _global_logger = None
 _logger_lock = threading.RLock()
 
 
-def get_trading_logger(log_dir: str = "logs") -> TradingLogger:
+def get_logger(log_dir: str = "logs") -> Logger:
     """
     获取全局交易日志管理器（单例模式）
 
@@ -186,19 +186,19 @@ def get_trading_logger(log_dir: str = "logs") -> TradingLogger:
         log_dir: 日志目录
 
     Returns:
-        TradingLogger: 日志管理器实例
+        Logger: 日志管理器实例
     """
     global _global_logger
 
     with _logger_lock:
         if _global_logger is None:
-            _global_logger = TradingLogger(log_dir)
+            _global_logger = Logger(log_dir)
         return _global_logger
 
 
-def setup_trading_logger(
+def setup_logger(
     log_dir: str = "logs", retention_days: int = 30, rotation_time: str = "00:00"
-) -> TradingLogger:
+) -> Logger:
     """
     设置交易日志系统（符合P0集成规范）
 
@@ -208,9 +208,9 @@ def setup_trading_logger(
         rotation_time: 轮转时间
 
     Returns:
-        TradingLogger: 日志管理器实例
+        Logger: 日志管理器实例
     """
-    trading_logger = get_trading_logger(log_dir)
+    trading_logger = get_logger(log_dir)
     trading_logger.setup(retention_days, rotation_time)
 
     # 将loguru logger附加到cerebro命名空间以便访问
@@ -234,7 +234,7 @@ def log_order_execution(
         size: 数量
         order_ref: 订单引用
     """
-    trading_logger = get_trading_logger()
+    trading_logger = get_logger()
     if trading_logger._configured:
         trading_logger.log_order(symbol, action, price, size, order_ref)
 
@@ -248,7 +248,7 @@ def log_risk_event(check_type: str, result: str, details: Dict = None):
         result: 检查结果
         details: 详细信息
     """
-    trading_logger = get_trading_logger()
+    trading_logger = get_logger()
     if trading_logger._configured:
         trading_logger.log_risk_check(check_type, result, details)
 
@@ -261,7 +261,7 @@ class LoggingStrategyMixin:
 
     def __init__(self):
         super(LoggingStrategyMixin, self).__init__()
-        self.trading_logger = get_trading_logger()
+        self.trading_logger = get_logger()
 
     def log(self, txt, dt=None):
         """增强的日志函数"""
@@ -299,7 +299,7 @@ class LoggingStrategyMixin:
 # 使用示例
 if __name__ == "__main__":
     # 设置日志系统
-    trading_logger = setup_trading_logger()
+    trading_logger = setup_logger()
 
     # 记录不同类型日志
     logger.info("系统启动")
