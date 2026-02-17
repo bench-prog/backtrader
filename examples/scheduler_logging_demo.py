@@ -13,6 +13,11 @@ Enterprise Scheduler & Logging Integration Example
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import datetime
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import time
 
 import backtrader as bt
@@ -101,8 +106,13 @@ def demonstrate_scheduler_and_logging():
     print("\n[3] 配置回测环境...")
 
     # 添加数据
+    data_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "datas",
+        "2006-day-001.txt",
+    )
     data = bt.feeds.GenericCSVData(
-        dataname="../datas/2006-day-001.txt",
+        dataname=data_path,
         dtformat="%Y-%m-%d",
         openinterest=-1,
         fromdate=datetime.datetime(2006, 1, 1),
